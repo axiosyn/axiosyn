@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuestLife — Reset Password</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6; max-width: 460px; margin: 0 auto; padding: 48px 20px 80px;
+      color: #1a1a2e; background: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e6e6f0; background: #0f0f1a; }
+      input { background: #1a1a2e; color: #e6e6f0; border-color: rgba(255,255,255,.15); }
+      .card { background: #16162a; border-color: rgba(255,255,255,.1); }
+    }
+    h1 { font-size: 1.6rem; margin-bottom: 8px; }
+    p { color: #777; margin-bottom: 20px; }
+    .card { border: 1px solid rgba(128,128,128,.3); border-radius: 14px; padding: 24px; background: #f7f7fb; }
+    label { display: block; font-size: .85rem; font-weight: 600; margin: 14px 0 6px; }
+    input {
+      width: 100%; box-sizing: border-box; padding: 12px 14px; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: 10px; background: #fff; color: #1a1a2e;
+    }
+    button {
+      width: 100%; margin-top: 22px; padding: 13px; font-size: 1rem; font-weight: 700;
+      border: none; border-radius: 10px; background: #6c5ce7; color: #fff; cursor: pointer;
+    }
+    button:disabled { opacity: .5; cursor: default; }
+    .msg { margin-top: 18px; font-size: .95rem; }
+    .msg.error { color: #e74c3c; }
+    .msg.ok { color: #2ecc71; }
+    .hidden { display: none; }
+    .brand { font-weight: 800; letter-spacing: .02em; }
+  </style>
+</head>
+<body>
+  <h1><span class="brand">QuestLife</span> — Reset Password</h1>
+
+  <div class="card">
+    <div id="loading">
+      <p>Verifying your reset link&hellip;</p>
+    </div>
+
+    <form id="form" class="hidden" onsubmit="return false;">
+      <p>Choose a new password for your account.</p>
+      <label for="pw">New password</label>
+      <input id="pw" type="password" autocomplete="new-password" placeholder="At least 6 characters" />
+      <label for="pw2">Confirm new password</label>
+      <input id="pw2" type="password" autocomplete="new-password" placeholder="Re-enter password" />
+      <button id="submit" type="submit">Update password</button>
+      <div id="formMsg" class="msg"></div>
+    </form>
+
+    <div id="invalid" class="hidden">
+      <p class="msg error">
+        This reset link is invalid or has expired. Open the QuestLife app, tap
+        &ldquo;Forgot password?&rdquo; again, and use the newest email link.
+      </p>
+    </div>
+
+    <div id="done" class="hidden">
+      <p class="msg ok">
+        Your password has been updated. You can now return to the QuestLife app and sign in
+        with your new password.
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const SUPABASE_URL = 'https://coylddziizqojknzpjao.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_7-_pCXElbb49PbaIDl3daQ_ey0pdHVY';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { detectSessionInUrl: true, persistSession: false },
+    });
+
+    const $ = (id) => document.getElementById(id);
+    const show = (id) => $(id).classList.remove('hidden');
+    const hide = (id) => $(id).classList.add('hidden');
+
+    let hasRecoverySession = false;
+
+    function revealForm() {
+      if (hasRecoverySession) return;
+      hasRecoverySession = true;
+      hide('loading');
+      hide('invalid');
+      show('form');
+    }
+
+    // Recovery session arrives via the email link; supabase-js parses it from the URL.
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' || session) revealForm();
+    });
+
+    // Fallback in case the event fired before this listener attached.
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        revealForm();
+      } else {
+        // Give the URL-detection a moment, then show the invalid state.
+        setTimeout(() => {
+          if (!hasRecoverySession) { hide('loading'); show('invalid'); }
+        }, 1500);
+      }
+    })();
+
+    $('submit').addEventListener('click', async () => {
+      const pw = $('pw').value;
+      const pw2 = $('pw2').value;
+      const msg = $('formMsg');
+      msg.className = 'msg';
+      msg.textContent = '';
+
+      if (pw.length < 6) { msg.classList.add('error'); msg.textContent = 'Password must be at least 6 characters.'; return; }
+      if (pw !== pw2) { msg.classList.add('error'); msg.textContent = 'Passwords do not match.'; return; }
+
+      $('submit').disabled = true;
+      const { error } = await supabase.auth.updateUser({ password: pw });
+      $('submit').disabled = false;
+
+      if (error) {
+        msg.classList.add('error');
+        msg.textContent = error.message || 'Could not update password. Try the link again.';
+        return;
+      }
+      hide('form');
+      show('done');
+    });
+  </script>
+</body>
+</html>

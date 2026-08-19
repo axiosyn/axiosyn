@@ -1,0 +1,13 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+.claude/
+
+# Working files — never published to axiosyn.com
+/ai/
+/photos/
+/videos/
+/questlife/store-assets/
