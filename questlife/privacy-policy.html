@@ -31,13 +31,13 @@
 </head>
 <body>
   <h1>QuestLife — Privacy Policy</h1>
-  <p class="meta">Last updated: 29 May 2026</p>
+  <p class="meta">Last updated: 12 September 2026</p>
 
   <p>
     QuestLife (&ldquo;QuestLife&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) is a gamified
-    habit-tracking mobile application developed and operated by an independent developer. This Privacy Policy
-    explains what personal information we collect, how we use and protect it, and the rights you have over it.
-    By creating an account or using QuestLife, you agree to the practices described here.
+    habit-tracking mobile application developed and operated by Axiosyn, an independent developer. Axiosyn is
+    the data controller responsible for your personal data. This Privacy Policy explains what personal
+    information we collect, how we use and protect it, and the rights you have over it.
   </p>
   <p>
     If you have any questions, or wish to exercise your privacy rights, contact us at
@@ -51,28 +51,33 @@
   <ul>
     <li><strong>Email address</strong> — used to create your account, sign you in, and contact you about your account.</li>
     <li><strong>Password</strong> — stored only in a securely hashed form by our authentication provider. We never see or store your plain-text password.</li>
+    <li><strong>Terms acceptance record</strong> — when you create an account, the date and time you accepted our Terms of Service and which versions of the Terms and this Privacy Policy were in effect.</li>
   </ul>
 
   <h3>Profile &amp; gameplay data</h3>
   <ul>
-    <li>Username (display name you choose) and optional avatar / selected character class.</li>
-    <li>The habits and quests you create, and your completion history.</li>
-    <li>In-game progress: level, experience points (XP), character stats, streaks, coins, diamonds, equipment, potions, achievements, encounter and dungeon progress.</li>
-    <li>App preferences (e.g. sound on/off, reminder times).</li>
+    <li>Username (display name you choose) and your selected character class and pet companion.</li>
+    <li>The habits and quests you create, and your completion history (including focus-timer sessions).</li>
+    <li>In-game progress: level, experience points (XP), character stats, streaks, coins, diamonds, shards, potions, achievements, and encounter, dungeon, and bounty progress.</li>
+    <li>Purchase records (which diamond packs or QuestLife Plus subscription you bought) used to grant your items and prevent duplicate charges.</li>
+    <li>App preferences (e.g. sound on/off, reminder times, chosen background).</li>
   </ul>
 
   <h3>Device &amp; technical data</h3>
   <ul>
     <li>Notification permission status, used only to deliver the local reminders you choose to set. Reminders are scheduled on your device; we do not run a server that tracks your activity in real time.</li>
     <li>Basic technical information necessary to operate the app and keep your account secure (such as authentication session tokens).</li>
+    <li><strong>IP address</strong> — recorded in our backend provider&rsquo;s logs when you sign in and use the app, for security and abuse prevention.</li>
+    <li>When the app checks for updates, our update provider (Expo) receives your IP address and an anonymous installation identifier so the right version of the app can be delivered to your device.</li>
   </ul>
 
-  <h3>Purchases (if and when enabled)</h3>
+  <h3>Purchases</h3>
   <p>
-    QuestLife may offer optional paid features in the future. If you make a purchase, the transaction is handled
-    by Google Play and our subscription provider (RevenueCat). We receive confirmation of your purchase and
-    entitlement status, but we <strong>never receive or store your full payment card details</strong>. This
-    feature is not active in the current version.
+    QuestLife offers optional in-app purchases — consumable diamond packs and the QuestLife Plus subscription.
+    If you make a purchase, the transaction is handled entirely by Google Play, with purchase validation by our
+    provider (RevenueCat). We receive confirmation of your purchase and entitlement status (what you bought and
+    whether your subscription is active) so we can grant your diamonds or Plus features, but we
+    <strong>never receive or store your payment card details</strong>. Google Play handles all billing.
   </p>
 
   <h3>What we do NOT collect</h3>
@@ -111,9 +116,10 @@
   <table>
     <tr><th>Provider</th><th>Purpose</th></tr>
     <tr><td>Supabase</td><td>Database, authentication, and backend hosting of your account and gameplay data</td></tr>
-    <tr><td>Expo (Expo Application Services)</td><td>App build and delivery infrastructure</td></tr>
+    <tr><td>Expo (Expo Application Services)</td><td>App build infrastructure and delivery of app updates (receives your IP address and an anonymous installation identifier when the app checks for updates)</td></tr>
     <tr><td>Google Play</td><td>App distribution and, where applicable, payment processing</td></tr>
-    <tr><td>RevenueCat</td><td>Management of optional subscriptions / purchases (only if you make a purchase)</td></tr>
+    <tr><td>RevenueCat</td><td>Purchase validation and subscription status. Receives your account&rsquo;s user ID whenever you sign in, so the app can check whether you have QuestLife Plus, and records the purchases you make</td></tr>
+    <tr><td>Resend</td><td>Delivery of account emails, such as sign-up confirmation and password reset (receives your email address)</td></tr>
   </table>
   <p>
     We may also disclose information if required by law, to enforce our terms, or to protect the rights,
@@ -131,10 +137,10 @@
 
   <h2>6. International Data Transfers</h2>
   <p>
-    Your data is stored and processed on our providers&rsquo; cloud infrastructure, which may be located in a
-    country different from your own (for example, the United States or the European Union). Where data is
-    transferred internationally, our providers rely on appropriate safeguards such as Standard Contractual
-    Clauses to protect it.
+    Your account and gameplay data are stored by Supabase in the European Union (Ireland). Some of our other
+    providers (for example RevenueCat, Expo, Resend and Google) may process data in other countries, including
+    the United States. Where data is transferred outside the European Economic Area, our providers rely on
+    appropriate safeguards such as Standard Contractual Clauses to protect it.
   </p>
 
   <h2>7. Your Rights</h2>
@@ -187,14 +193,14 @@
   <h2>10. Changes to This Policy</h2>
   <p>
     We may update this Privacy Policy from time to time. If we make material changes, we will update the
-    &ldquo;Last updated&rdquo; date above and, where appropriate, notify you within the app. Your continued use
-    of QuestLife after changes take effect constitutes acceptance of the revised policy.
+    &ldquo;Last updated&rdquo; date above and, where appropriate, notify you within the app. The current version
+    is always the one published on this page.
   </p>
 
   <h2>11. Contact Us</h2>
   <p>
     For any privacy questions or requests, contact:<br />
-    <strong>QuestLife</strong><br />
+    <strong>Axiosyn</strong> (QuestLife)<br />
     Email: <a href="mailto:axiosyn@gmail.com">axiosyn@gmail.com</a>
   </p>
 </body>
