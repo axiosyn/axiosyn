@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'; connect-src 'self' https://coylddziizqojknzpjao.supabase.co; base-uri 'none'; form-action 'none'" />
+  <meta name="referrer" content="no-referrer" />
+  <title>QuestLife Hero</title>
+  <meta name="description" content="A hero from QuestLife — the habit tracker that's actually an RPG." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="QuestLife" />
+  <meta property="og:title" content="Meet my QuestLife hero ⚔️" />
+  <meta property="og:description" content="My real-life habits level up my hero. Come see who I've become." />
+  <meta property="og:image" content="https://axiosyn.com/questlife/questlife-icon.png" />
+  <meta name="theme-color" content="#0F0F1A" />
+  <link rel="icon" href="../questlife-icon.png" />
+  <!--
+    Public page for a shared hero: https://axiosyn.com/questlife/hero/?c=<code>
+    The code comes from the app's create_hero_share RPC; get_hero_share returns
+    ONLY name, Plus and look (never level/stats). Rendering mirrors the app's
+    PartsAvatar: full-canvas layers stacked in order, Head/Sword swapped for the
+    loadout donors, face blinking through its 3 frames. Art + parts.json are
+    published by liferpg/scripts/export-web-parts.py — don't edit them by hand.
+  -->
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #e6e6f0; background: #0f0f1a;
+      background-image: radial-gradient(ellipse at 50% 30%, #2a2350 0%, #0f0f1a 70%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px 16px 48px;
+    }
+    main { width: 100%; max-width: 420px; text-align: center; }
+    .brand { font-weight: 800; letter-spacing: .04em; color: #a29bfe; font-size: .95rem; margin: 0 0 20px; }
+    .stage { position: relative; width: 280px; max-width: 100%; margin: 0 auto; aspect-ratio: 403 / 391; }
+    .stage img { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: auto; }
+    .ground {
+      width: 220px; height: 22px; margin: -14px auto 0; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 70%);
+    }
+    .name-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; min-height: 36px; }
+    .name { font-size: 1.7rem; font-weight: 800; margin: 0; word-break: break-word; }
+    .coin { width: 30px; height: 30px; flex: none; }
+    .tag { color: #9a9ab0; margin: 6px 0 28px; }
+    .cta {
+      display: inline-block; padding: 14px 26px; border-radius: 12px; font-weight: 800; font-size: 1rem;
+      background: #6c5ce7; color: #fff; text-decoration: none;
+    }
+    .cta:active { opacity: .85; }
+    .sub { color: #77778f; font-size: .85rem; margin-top: 14px; }
+    .msg { color: #9a9ab0; margin: 40px 0; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="brand">QUESTLIFE</p>
+
+    <div id="hero" class="hidden">
+      <div class="stage" id="stage" role="img" aria-label="QuestLife hero"></div>
+      <div class="ground"></div>
+      <div class="name-row">
+        <img id="coin" class="coin hidden" alt="QuestLife Plus" />
+        <h1 class="name" id="name"></h1>
+      </div>
+      <p class="tag">is levelling up in real life.</p>
+    </div>
+
+    <p id="loading" class="msg">Summoning hero&hellip;</p>
+    <p id="missing" class="msg hidden">This hero link doesn't exist anymore.</p>
+
+    <a class="cta" id="cta"
+       href="https://play.google.com/store/apps/details?id=com.axiosyn.questlife&referrer=utm_source%3Dhero_page%26utm_medium%3Dweb">
+      Start your quest — Get QuestLife
+    </a>
+    <p class="sub">The habit tracker that's actually an RPG. Free on Google Play.</p>
+  </main>
+
+  <script type="module" src="hero.js"></script>
+</body>
+</html>
