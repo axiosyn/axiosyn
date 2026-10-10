@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.axiosyn.questlife",
+      "sha256_cert_fingerprints": [
+        "33:87:B5:23:50:E1:CF:DC:37:11:71:31:52:1E:3E:D3:A2:23:9D:7E:F6:6F:1B:C6:DD:0A:71:7B:98:48:24:FE"
+      ]
+    }
+  }
+]
