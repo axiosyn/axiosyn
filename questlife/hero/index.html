@@ -53,6 +53,9 @@
     .cta:active { opacity: .85; }
     .sub { color: #77778f; font-size: .85rem; margin-top: 14px; }
     .msg { color: #9a9ab0; margin: 40px 0; }
+    .friend { background: #1a1a2e; border-radius: 12px; padding: 12px 16px; margin: -12px 0 24px; }
+    .friend-label, .friend-how { color: #9a9ab0; font-size: .8rem; margin: 0; }
+    .friend-code { font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; margin: 2px 0 6px; }
     .hidden { display: none; }
   </style>
 </head>
@@ -68,6 +71,11 @@
         <h1 class="name" id="name"></h1>
       </div>
       <p class="tag">is levelling up in real life.</p>
+      <div id="friend" class="friend hidden">
+        <p class="friend-label">Friend code</p>
+        <p class="friend-code" id="friend-code"></p>
+        <p class="friend-how">In QuestLife: Profile → Friends → Add by code</p>
+      </div>
     </div>
 
     <p id="loading" class="msg">Summoning hero&hellip;</p>

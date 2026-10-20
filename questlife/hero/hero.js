@@ -98,6 +98,12 @@ async function render(share, manifest) {
     setInterval(() => { f = (f + 1) % manifest.plus.length; coin.src = manifest.plus[f]; }, 1000 / COIN_FPS);
     show('coin');
   }
+  // Friend code (servers from 2026-10-21 on): add this hero in the app by code.
+  if (typeof share.code === 'string' && /^[0-9a-f]{6,32}$/i.test(share.code)) {
+    const c = share.code.toUpperCase();
+    $('friend-code').textContent = c.length > 5 ? `${c.slice(0, 5)}-${c.slice(5)}` : c;
+    show('friend');
+  }
   return true;
 }
 
