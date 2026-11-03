@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>QuestLife: the habit tracker that's actually an RPG</title>
+  <meta name="description" content="Small steps, bigger you. QuestLife turns your real habits into quests: earn XP, level up a hero, walk the Long Road with your steps, play original mini-games and clear torchlit dungeons with friends. Free on Android, no ads." />
+  <link rel="canonical" href="https://axiosyn.com/questlife/" />
+  <link rel="icon" href="/questlife/brand/favicon.png" />
+  <meta name="theme-color" content="#0d0b2a" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="QuestLife" />
+  <meta property="og:url" content="https://axiosyn.com/questlife/" />
+  <meta property="og:title" content="QuestLife: small steps, bigger you" />
+  <meta property="og:description" content="Your habits are the quests. Level up a hero who's all yours. Free on Android, no ads." />
+  <meta property="og:image" content="https://axiosyn.com/questlife/img/og.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="/questlife/home.css" />
+  <script type="module" src="/questlife/home.js"></script>
+</head>
+<body>
+  <!--
+    The QuestLife landing page. Heroes are drawn live from the same parts the
+    shared-hero page uses (hero/parts.json, published by
+    liferpg/scripts/export-web-parts.py). Images in img/ come from the app's art
+    (made by a script, not edited by hand). Every claim matches the Play listing
+    copy in liferpg/legal/play-store-listing.md.
+  -->
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <a class="nav-brand" href="/questlife/" aria-label="QuestLife home">
+      <img src="/questlife/brand/emblem.png" alt="" width="34" height="33" />
+      <img class="nav-word" src="/questlife/brand/wordmark.png" alt="QuestLife" width="118" height="28" />
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#road">The Long Road</a>
+      <a href="#play">Mini-games</a>
+      <a href="#heroes">Heroes</a>
+      <a href="#companions">Companions</a>
+    </nav>
+    <a class="play-btn small" href="https://play.google.com/store/apps/details?id=com.axiosyn.questlife&amp;referrer=utm_source%3Daxiosyn%26utm_medium%3Dweb%26utm_content%3Dnav" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>
+      Get the app
+    </a>
+  </header>
+
+  <main id="main">
+    <!-- ========== 1. The opening: sky, promise, and a demo you can play ========== -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="sky" aria-hidden="true"><span class="stars s1"></span><span class="stars s2"></span><span class="stars s3"></span></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">The habit tracker that's actually an RPG</p>
+          <h1 id="hero-title">Small steps,<br /><span class="gold">bigger you.</span></h1>
+          <p class="lede">Every workout, every page read, every early night is a quest. Do the real thing, tick it off, and watch a hero who's all yours level up with you.</p>
+          <div class="cta-row">
+            <a class="play-btn" href="https://play.google.com/store/apps/details?id=com.axiosyn.questlife&amp;referrer=utm_source%3Daxiosyn%26utm_medium%3Dweb%26utm_content%3Dhero" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>
+              <span><small>Get it on</small>Google Play</span>
+            </a>
+            <p class="cta-note">Free to play<span>·</span>No ads<span>·</span>Android</p>
+          </div>
+        </div>
+
+        <div class="demo" id="demo">
+          <div class="demo-top">
+            <div class="lvl"><span class="lvl-label">Level</span><span class="lvl-num" id="lvl">4</span></div>
+            <div class="xp">
+              <div class="xp-row"><span>XP</span><span id="xp-text">40 / 100</span></div>
+              <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+            </div>
+          </div>
+          <div class="stage" id="demo-stage">
+            <div class="region" id="demo-region" style="background-image:url(/questlife/img/regions/r1.jpg)"></div>
+            <div class="region next" id="demo-region-next"></div>
+            <div class="actors">
+              <div class="hero-sprite" id="demo-hero" role="img" aria-label="A QuestLife hero"></div>
+              <img class="pet-sprite" id="demo-pet" src="/questlife/img/pets/kumo.webp" alt="Kumo, a companion" />
+            </div>
+            <div class="floaters" id="floaters" aria-live="polite"></div>
+            <div class="levelup" id="levelup" aria-hidden="true">
+              <p class="lu-title">Level up!</p>
+              <p class="lu-sub" id="lu-sub">Level 5 · Autumn Grove unlocked</p>
+            </div>
+          </div>
+          <div class="quests">
+            <p class="quests-head">Today's quests <span>Tap to complete</span></p>
+            <button class="quest" data-stat="str" data-xp="25"><span class="q-check"></span><span class="q-text"><b>Morning Workout</b><i>Any exercise, before the day gets busy</i></span><span class="chip str">STR</span><span class="q-xp">+25 XP</span></button>
+            <button class="quest" data-stat="int" data-xp="25"><span class="q-check"></span><span class="q-text"><b>Read for 20 Minutes</b><i>Books, articles, anything you learn from</i></span><span class="chip int">INT</span><span class="q-xp">+25 XP</span></button>
+            <button class="quest" data-stat="vit" data-xp="25"><span class="q-check"></span><span class="q-text"><b>Sleep Before Midnight</b><i>In bed, lights off, phone away</i></span><span class="chip vit">VIT</span><span class="q-xp">+25 XP</span></button>
+            <button class="again" id="again" hidden>Do it again</button>
+          </div>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#stats" aria-label="Scroll to learn more"><span></span></a>
+    </section>
+
+    <!-- ========== 2. Five stats ========== -->
+    <section class="stats-sec" id="stats" aria-labelledby="stats-title">
+      <div class="wrap">
+        <p class="eyebrow reveal">Habits become quests</p>
+        <h2 id="stats-title" class="reveal">Five stats. <span class="gold">All of them real.</span></h2>
+        <p class="sec-lede reveal">Add daily, weekly or monthly quests with one tap, or write your own. Each one trains a stat, so the hero you build is a picture of the life you're building.</p>
+        <div class="stat-grid">
+          <article class="stat-card reveal" style="--c:#FF6B6B"><span class="stat-abbr">STR</span><h3>Strength</h3><p>Morning Workout · 50 Push-ups · Take the Stairs</p></article>
+          <article class="stat-card reveal" style="--c:#8F89FF"><span class="stat-abbr">INT</span><h3>Intelligence</h3><p>Read for 20 Minutes · Solve a Puzzle · Learn a New Word</p></article>
+          <article class="stat-card reveal" style="--c:#FFD93D"><span class="stat-abbr">CHA</span><h3>Charisma</h3><p>Call a Friend or Family · Talk to Someone New</p></article>
+          <article class="stat-card reveal" style="--c:#4ECDC4"><span class="stat-abbr">VIT</span><h3>Vitality</h3><p>Sleep Before Midnight · Cook a Healthy Meal</p></article>
+          <article class="stat-card reveal" style="--c:#FF9F43"><span class="stat-abbr">DIS</span><h3>Discipline</h3><p>Make Your Bed · Meditate for 10 Minutes</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3. The Long Road ========== -->
+    <section class="road-sec" id="road" aria-labelledby="road-title">
+      <div class="wrap">
+        <p class="eyebrow reveal">The Long Road</p>
+        <h2 id="road-title" class="reveal">Your real steps walk your hero<br class="br-wide" /> <span class="gold">across the world.</span></h2>
+        <p class="sec-lede reveal">Connect Health Connect and every 3,000 steps, every workout and every good night's sleep feeds your stats. Your lifetime steps carry your hero from Lakeside all the way to The Wanderer's End.</p>
+      </div>
+      <div class="road" aria-hidden="true">
+        <div class="road-track" id="road-track"></div>
+        <div class="road-walker">
+          <img class="pet-sprite walk-pet" id="road-pet" src="/questlife/img/pets/pip.webp" alt="" />
+          <div class="hero-sprite walking" id="road-hero"></div>
+        </div>
+      </div>
+      <ol class="milestones wrap" aria-label="Landmarks on the Long Road">
+        <li><b>10,000</b> Autumn Grove</li>
+        <li><b>25,000</b> Desert Canyon</li>
+        <li><b>50,000</b> Snowy Village</li>
+        <li><b>100,000</b> Blossom Garden</li>
+        <li><b>250,000</b> Volcanic Lands</li>
+        <li><b>500,000</b> Sky Islands</li>
+        <li><b>750,000</b> Castle Courtyard</li>
+        <li><b>1,000,000</b> The Wanderer's End</li>
+      </ol>
+    </section>
+
+    <!-- ========== 4. Mini-games ========== -->
+    <section class="feature" id="play" aria-labelledby="play-title">
+      <div class="wrap feature-grid">
+        <figure class="phone reveal tilt-l"><img src="/questlife/img/shots/minigame.webp" alt="Sky Run, one of QuestLife's mini-games" width="480" height="960" loading="lazy" /></figure>
+        <div class="feature-copy">
+          <p class="eyebrow reveal">Five original mini-games</p>
+          <h2 id="play-title" class="reveal">Not stat checks. <span class="gold">Real arcade rounds.</span></h2>
+          <p class="reveal">Daily encounters launch games built for the stat they test. Win XP, gold and diamonds, then come back for a high score.</p>
+          <ul class="game-list reveal">
+            <li style="--c:#4ECDC4"><b>Sky Run</b><span>VIT</span></li>
+            <li style="--c:#FF6B6B"><b>Blade Trial</b><span>STR</span></li>
+            <li style="--c:#8F89FF"><b>Rune Lattice</b><span>INT</span></li>
+            <li style="--c:#FFD93D"><b>The Performance</b><span>CHA</span></li>
+            <li style="--c:#FF9F43"><b>Focus Trial</b><span>DIS</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 5. Dungeons ========== -->
+    <section class="dungeon-sec" aria-labelledby="dungeon-title">
+      <div class="crypt reveal" aria-hidden="true">
+        <span class="torch t1"></span><span class="torch t2"></span>
+        <div class="duel">
+          <div class="hero-sprite" id="duel-hero"></div>
+          <img class="boss" src="/questlife/img/boss.webp" alt="" />
+        </div>
+      </div>
+      <div class="wrap dungeon-copy">
+        <p class="eyebrow reveal">Torchlit dungeons</p>
+        <h2 id="dungeon-title" class="reveal">Your quests light the way <span class="gold">to the boss.</span></h2>
+        <p class="sec-lede reveal">Quests earn torches. Spend them on the rooms of the weekly dungeon, then face its boss: win the mini-games to land your hits before your hearts run out.</p>
+      </div>
+    </section>
+
+    <!-- ========== 6. Friends ========== -->
+    <section class="feature" aria-labelledby="friends-title">
+      <div class="wrap feature-grid flip">
+        <figure class="phone reveal tilt-r"><img src="/questlife/img/shots/duo.webp" alt="Duo and party quests with friends" width="480" height="1040" loading="lazy" /></figure>
+        <div class="feature-copy">
+          <p class="eyebrow reveal">Quest with friends</p>
+          <h2 id="friends-title" class="reveal">Better together. <span class="gold">Literally.</span></h2>
+          <p class="reveal">Add friends by code and take on duo and party quests side by side: walk 70,000 steps between you, keep a week-long streak together, or race through your quests as a party. Everyone who finishes gets the reward.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 7. Heroes ========== -->
+    <section class="heroes-sec" id="heroes" aria-labelledby="heroes-title">
+      <div class="wrap">
+        <p class="eyebrow reveal">A hero that grows with you</p>
+        <h2 id="heroes-title" class="reveal">Dozens of heroes to customise. <span class="gold">One of them is you.</span></h2>
+        <p class="sec-lede reveal">Unlock characters, many of which evolve as you level. Mix heads, faces, outfits and weapons in the customizer, and pick the backdrop you've earned.</p>
+      </div>
+      <div class="showcase reveal">
+        <button class="sc-arrow prev" id="sc-prev" aria-label="Previous hero"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="sc-stage" id="sc-stage">
+          <div class="region" id="sc-region"></div>
+          <div class="region next" id="sc-region-next"></div>
+          <div class="hero-sprite big" id="sc-hero" role="img" aria-label="Hero"></div>
+        </div>
+        <button class="sc-arrow next" id="sc-next" aria-label="Next hero"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        <p class="sc-name" id="sc-name" aria-live="polite"></p>
+        <div class="sc-dots" id="sc-dots"></div>
+      </div>
+    </section>
+
+    <!-- ========== 8. Companions ========== -->
+    <section class="pets-sec" id="companions" aria-labelledby="pets-title">
+      <div class="wrap">
+        <p class="eyebrow reveal">Companions</p>
+        <h2 id="pets-title" class="reveal">Companions. <span class="gold">Each with a perk.</span></h2>
+        <p class="sec-lede reveal">They walk at your hero's heels and help in small ways, from bonus coins to a forgiven missed day. Tap one to meet it, then go find the rest.</p>
+        <div class="pet-grid" id="pet-grid"></div>
+        <p class="pet-card" id="pet-card" aria-live="polite"><b>Kumo</b> · Shrine Blessing<br /><span>+30% XP &amp; coins from the daily pop quest</span></p>
+      </div>
+    </section>
+
+    <!-- ========== 9. Chronicle + promises ========== -->
+    <section class="feature" aria-labelledby="chron-title">
+      <div class="wrap feature-grid">
+        <figure class="phone reveal tilt-l"><img src="/questlife/img/shots/chronicle.webp" alt="The Chronicle: your month in stats" width="480" height="1040" loading="lazy" /></figure>
+        <div class="feature-copy">
+          <p class="eyebrow reveal">The Chronicle</p>
+          <h2 id="chron-title" class="reveal">The month <span class="gold">you actually had.</span></h2>
+          <p class="reveal">Stat growth, XP earned, an activity calendar, your health totals, your most-trained habits and a plain-language recap. Plus a focus timer for any quest, daily rewards on the Tavern Board, weekly bounties and chests.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="promise-sec" aria-labelledby="promise-title">
+      <div class="wrap">
+        <h2 id="promise-title" class="reveal">Made to be <span class="gold">good for you.</span></h2>
+        <div class="promise-grid">
+          <article class="promise reveal"><span class="p-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></span><h3>No ads</h3><p>None. Not in the game, not between quests, not ever.</p></article>
+          <article class="promise reveal"><span class="p-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span><h3>No third-party tracking</h3><p>Your habits are yours. Read exactly what's stored in the <a href="/questlife/privacy-policy.html">privacy policy</a>.</p></article>
+          <article class="promise reveal"><span class="p-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 20V10M12 20V4M18 20v-7"/></svg></span><h3>Stats can't be bought</h3><p>They're only ever earned, by doing the real thing.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 10. The last word ========== -->
+    <section class="final" aria-labelledby="final-title">
+      <div class="final-bg" aria-hidden="true"></div>
+      <div class="lineup" id="lineup" aria-hidden="true"></div>
+      <div class="final-copy">
+        <img class="final-emblem" src="/questlife/brand/emblem.png" alt="" width="120" height="116" />
+        <h2 id="final-title">Start your first quest <span class="gold">today.</span></h2>
+        <a class="play-btn" href="https://play.google.com/store/apps/details?id=com.axiosyn.questlife&amp;referrer=utm_source%3Daxiosyn%26utm_medium%3Dweb%26utm_content%3Dfooter" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"/></svg>
+          <span><small>Get it on</small>Google Play</span>
+        </a>
+        <p class="cta-note">Free to play. Optional diamonds and QuestLife Plus unlock cosmetics, a monthly diamond allowance and your full Chronicle history.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <img src="/questlife/brand/wordmark.png" alt="QuestLife" width="120" height="29" />
+      <nav aria-label="Legal">
+        <a href="/questlife/privacy-policy.html">Privacy</a>
+        <a href="/questlife/terms-of-service.html">Terms</a>
+        <a href="/questlife/licenses.html">Licences</a>
+        <a href="/questlife/delete-account.html">Delete account</a>
+        <a href="mailto:axiosyn@gmail.com">Contact</a>
+      </nav>
+      <p>© 2026 Axiosyn</p>
+    </div>
+  </footer>
+</body>
+</html>
