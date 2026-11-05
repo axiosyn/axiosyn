@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Critical-angle refractometry · axiosyn</title>
+<meta name="description" content="Self-published papers by Ierotheos Katsoulis on critical-angle refractometry of water, Intralipid and milk cream: polarization-resolved measurements, a polarization bias of the derivative method, and instrument-corrected refractive indices." />
+<meta property="og:title" content="Critical-angle refractometry · axiosyn" />
+<meta property="og:description" content="Three self-published papers on polarization-resolved critical-angle refractometry of water, Intralipid and milk cream." />
+<meta property="og:image" content="https://axiosyn.com/optics/img/optics-2.jpg" />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0e0c;
+    --bg-2: #0f1512;
+    --ink: #e8f0ea;
+    --ink-dim: #8a9991;
+    --phos: #7dffb1;
+    --phos-glow: rgba(125, 255, 177, 0.35);
+    --amber: #ffb347;
+    --line: rgba(125, 255, 177, 0.12);
+    --line-strong: rgba(125, 255, 177, 0.28);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --serif: 'Fraunces', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans); background: var(--bg); color: var(--ink);
+    line-height: 1.6; overflow-x: hidden;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 40px 40px; background-position: -1px -1px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at 20% 0%, rgba(125, 255, 177, 0.08), transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(255, 179, 71, 0.05), transparent 50%);
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+  img { max-width: 100%; display: block; }
+  a { color: var(--phos); }
+
+  header {
+    border-bottom: 1px solid var(--line-strong); background: rgba(10, 14, 12, 0.85);
+    backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10;
+  }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; max-width: 1100px; margin: 0 auto;
+    font-family: var(--mono); font-size: 13px;
+  }
+  .logo { color: var(--phos); font-weight: 700; letter-spacing: 0.05em; text-decoration: none; }
+  .logo::before { content: '◉ '; animation: pulse 2s infinite; }
+  .logo span { color: var(--ink-dim); font-weight: 400; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  nav { display: flex; gap: 24px; }
+  nav a { color: var(--ink-dim); text-decoration: none; transition: color 0.2s; }
+  nav a:hover { color: var(--phos); }
+  @media (max-width: 600px) { nav { display: none; } }
+
+  .hero { padding: 72px 0 56px; }
+  .label {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--phos); display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px;
+  }
+  .label::before {
+    content: ''; width: 8px; height: 8px; background: var(--phos); border-radius: 50%;
+    box-shadow: 0 0 12px var(--phos-glow); animation: pulse 2s infinite;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(2.3rem, 6.5vw, 4.4rem);
+    line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: italic; color: var(--phos); text-shadow: 0 0 30px var(--phos-glow); }
+  .hero-sub { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--ink-dim); max-width: 720px; margin-bottom: 36px; }
+  .hero-sub strong { color: var(--ink); font-weight: 500; }
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--mono); font-size: 14px; padding: 14px 24px; text-decoration: none;
+    border: 1px solid var(--phos); color: var(--phos); background: transparent; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn:hover { background: var(--phos); color: var(--bg); box-shadow: 0 0 20px var(--phos-glow); }
+  .btn.secondary { border-color: var(--ink-dim); color: var(--ink-dim); }
+  .btn.secondary:hover { border-color: var(--ink); color: var(--ink); background: transparent; box-shadow: none; }
+
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+  @media (max-width: 760px) { .photos { grid-template-columns: 1fr; } }
+  .photos figure { border: 1px solid var(--line-strong); background: rgba(15, 21, 18, 0.4); }
+  .photos img {
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; cursor: zoom-in;
+    filter: contrast(1.05) saturate(0.95); transition: filter 0.3s;
+  }
+  .photos img:hover { filter: contrast(1.1) saturate(1.05); }
+  .photos figcaption { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); padding: 12px 16px; }
+
+  section { padding: 64px 0; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 40px;
+    border-bottom: 1px dashed var(--line-strong); padding-bottom: 16px;
+  }
+  .section-num { font-family: var(--mono); font-size: 12px; color: var(--phos); letter-spacing: 0.1em; }
+  .section-head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -0.01em; }
+
+  .papers { display: grid; gap: 24px; }
+  .paper {
+    border: 1px solid var(--line-strong); padding: 28px 32px; background: rgba(15, 21, 18, 0.4);
+    display: grid; grid-template-columns: 1fr auto; gap: 8px 32px; align-items: start; transition: all 0.3s;
+  }
+  .paper:hover { border-color: var(--phos); box-shadow: 0 0 30px var(--phos-glow), inset 0 0 30px rgba(125, 255, 177, 0.03); }
+  .paper.lead { border-color: var(--phos); background: linear-gradient(135deg, rgba(125, 255, 177, 0.05), transparent 60%); }
+  @media (max-width: 760px) { .paper { grid-template-columns: 1fr; padding: 24px; } }
+  .paper-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); }
+  .paper h3 { font-family: var(--serif); font-weight: 600; font-size: 1.4rem; line-height: 1.25; margin: 6px 0 10px; }
+  .paper p { color: var(--ink-dim); max-width: 720px; }
+  .paper .btn { align-self: center; white-space: nowrap; }
+
+  .findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+  .finding { border-left: 2px solid var(--phos); padding: 4px 0 4px 20px; }
+  .finding .num { font-family: var(--mono); font-size: 1.35rem; color: var(--phos); display: block; margin-bottom: 6px; }
+  .finding p { color: var(--ink-dim); font-size: 0.95rem; }
+  sub, sup { font-size: 0.7em; }
+
+  .two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; gap: 28px; } }
+  .prose p { margin-bottom: 16px; }
+  .prose p.dim { color: var(--ink-dim); }
+  .specs { font-family: var(--mono); font-size: 13px; border: 1px solid var(--line-strong); padding: 24px; background: rgba(15, 21, 18, 0.4); }
+  .specs h4 { color: var(--phos); margin-bottom: 14px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; }
+  .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dotted var(--line); gap: 16px; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row span:first-child { color: var(--ink-dim); }
+  .spec-row span:last-child { color: var(--ink); text-align: right; }
+
+  .cite {
+    font-family: var(--mono); font-size: 13px; color: var(--ink); border: 1px solid var(--line-strong);
+    background: rgba(15, 21, 18, 0.6); padding: 20px 24px; margin: 8px 0 20px; position: relative;
+  }
+  .cite::before, .cite::after { content: ''; position: absolute; width: 14px; height: 14px; border: 2px solid var(--phos); }
+  .cite::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .cite::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+  footer { border-top: 1px solid var(--line-strong); padding: 32px 0; margin-top: 40px; font-family: var(--mono); font-size: 12px; color: var(--ink-dim); position: relative; z-index: 2; }
+  .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .blink { animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .lightbox {
+    position: fixed; inset: 0; background: rgba(5, 8, 6, 0.95); display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 24px; cursor: zoom-out; backdrop-filter: blur(4px);
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 95%; max-height: 95vh; object-fit: contain; border: 1px solid var(--phos); box-shadow: 0 0 60px var(--phos-glow); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .hero > * { animation: fadeUp 0.6s ease-out backwards; }
+  .hero h1 { animation-delay: 0.1s; } .hero-sub { animation-delay: 0.2s; } .cta-row { animation-delay: 0.3s; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="/optics/">AXIOSYN <span>/ optics</span></a>
+    <nav>
+      <a href="#papers">papers</a>
+      <a href="#findings">findings</a>
+      <a href="#data">data &amp; code</a>
+      <a href="#cite">cite</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <div class="label">Research · Optics · 2020–2026</div>
+    <h1>Critical-angle <em>refractometry</em><br/> of water, Intralipid and cream.</h1>
+    <p class="hero-sub">
+      Three self-published papers by <strong>Ierotheos Katsoulis</strong>, from measurements made with a prism-coupling refractometer at the
+      <strong>Electronic Devices and Materials Laboratory, University of West Attica</strong>. They cover polarization-resolved refractive indices of water,
+      a polarization bias of the standard derivative method, and instrument-corrected indices of turbid media.
+    </p>
+    <div class="cta-row">
+      <a href="#papers" class="btn">→ Read the papers</a>
+      <a href="katsoulis-critical-angle-refractometry-2026.zip" class="btn secondary" download>Download everything (3.9 MB)</a>
+    </div>
+  </section>
+
+  <div class="photos">
+    <figure>
+      <img src="img/optics-1.jpg" alt="Sample cell clamped against the base of the prism on the rotary table" loading="lazy" />
+      <figcaption>The sample cell clamped against the prism on the rotary table.</figcaption>
+    </figure>
+    <figure>
+      <img src="img/optics-2.jpg" alt="Inside the prism coupler: laser modules and the prism and sample mount" loading="lazy" />
+      <figcaption>Inside the prism coupler: laser modules and the prism mount.</figcaption>
+    </figure>
+  </div>
+
+  <section id="papers">
+    <div class="section-head"><span class="section-num">/ 01</span><h2>Papers</h2></div>
+    <div class="papers">
+      <article class="paper lead">
+        <div>
+          <span class="paper-meta">Methods · 9 pages · start here</span>
+          <h3>Apparent birefringence in critical-angle refractometry: a polarization bias of the derivative method</h3>
+          <p>The standard derivative method makes isotropic water look birefringent by +3 to +8 × 10⁻⁵. The size of the artefact follows from the measured peak shapes alone; corrected, |n<sub>TM</sub> − n<sub>TE</sub>| &lt; 2 × 10⁻⁵.</p>
+        </div>
+        <a class="btn" href="papers/Paper1b_Methods_apparent_birefringence.pdf">PDF ↓</a>
+      </article>
+      <article class="paper">
+        <div>
+          <span class="paper-meta">Turbid media · 7 pages</span>
+          <h3>Complex refractive index of Intralipid and milk cream by instrument-corrected critical-angle refractometry</h3>
+          <p>Intralipid at 25 °C: n = 1.3691, 1.3595 and 1.3515 at 532, 964 and 1551 nm (± 0.0008), with TE and TM in agreement. Milk cream does not yield a reliable index by this method, and the paper shows why.</p>
+        </div>
+        <a class="btn" href="papers/Paper2_Intralipid_cream_refractive_index.pdf">PDF ↓</a>
+      </article>
+      <article class="paper">
+        <div>
+          <span class="paper-meta">Full study · 11 pages</span>
+          <h3>Polarization-resolved critical-angle refractometry of liquid water (532–1551 nm, 25–80 °C)</h3>
+          <p>The complete water analysis: TE/TM anisotropy, dispersion against the IAPWS formulation, and the temperature dependence of the index.</p>
+        </div>
+        <a class="btn" href="papers/Paper1_Water_TE_TM_refractometry_full_draft.pdf">PDF ↓</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="findings">
+    <div class="section-head"><span class="section-num">/ 02</span><h2>Main findings</h2></div>
+    <div class="findings">
+      <div class="finding"><span class="num">&lt; 2 × 10⁻⁵</span><p>Upper bound on |n<sub>TM</sub> − n<sub>TE</sub>| for water at a prism interface, 532–1551 nm (95 % confidence).</p></div>
+      <div class="finding"><span class="num">+3 to +8 × 10⁻⁵</span><p>Apparent birefringence the derivative method reports for isotropic water. It scales with (n<sub>p</sub>/n)² − 1.</p></div>
+      <div class="finding"><span class="num">± 5 × 10⁻⁴</span><p>Index offset set by the direction of table rotation. Averaging both directions removes it.</p></div>
+      <div class="finding"><span class="num">6.4 ×</span><p>How much the extinction coefficient would be overestimated if the artefact were read as absorption (water, 1551 nm).</p></div>
+      <div class="finding"><span class="num">1.3515</span><p>Refractive index of Intralipid at 1551 nm and 25 °C, relative to air (± 0.0008).</p></div>
+    </div>
+  </section>
+
+  <section id="data">
+    <div class="section-head"><span class="section-num">/ 03</span><h2>Data &amp; code</h2></div>
+    <div class="two-col">
+      <div class="prose">
+        <p>The download contains the three papers, all figures, the complete analysis code (Python), summary result tables, and a representative sample of 16 raw scans. A short script runs the analysis on the sample and prints the results next to the values in the papers; single scans agree to about 1 × 10⁻⁴.</p>
+        <p class="dim">The full measurement dataset was recorded at the Electronic Devices and Materials Laboratory (EDML), University of West Attica. It may be the property of the laboratory and is not disclosed. The sample files are shared for verification only and are not covered by the open licenses below.</p>
+        <a href="katsoulis-critical-angle-refractometry-2026.zip" class="btn" download>→ Download package (zip, 3.9 MB)</a>
+      </div>
+      <div class="specs">
+        <h4>Package contents</h4>
+        <div class="spec-row"><span>papers/</span><span>3 PDFs</span></div>
+        <div class="spec-row"><span>figures/</span><span>10 PNG</span></div>
+        <div class="spec-row"><span>code/</span><span>Python · MIT</span></div>
+        <div class="spec-row"><span>data_sample/</span><span>16 raw scans</span></div>
+        <div class="spec-row"><span>instrument</span><span>Metricon 2010/M</span></div>
+        <div class="spec-row"><span>wavelengths</span><span>450–1551 nm</span></div>
+        <div class="spec-row"><span>measured</span><span>2020–2021</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cite">
+    <div class="section-head"><span class="section-num">/ 04</span><h2>Credits, license &amp; citation</h2></div>
+    <div class="prose">
+      <p>Measurements by Ierotheos Katsoulis at the Electronic Devices and Materials Laboratory (EDML), Department of Electrical and Electronic Engineering, University of West Attica, during an MSc by Research supervised by Prof. Konstantinos Moutzouris (2020–2021). Analysis and writing: Ierotheos Katsoulis, 2026. These are self-published preprints and have not been peer-reviewed.</p>
+      <p class="dim">Papers and figures are licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>: use them for anything, with credit. Code is MIT-licensed. To cite:</p>
+      <div class="cite">I. Katsoulis, "Apparent birefringence in critical-angle refractometry: a polarization bias of the derivative method," self-published preprint, axiosyn.com/optics, November 2026.</div>
+      <p class="dim">The other two papers are cited the same way, by title.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Ierotheos Katsoulis · axiosyn</span>
+    <span>papers CC BY 4.0 · code MIT<span class="blink">_</span></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged photo"><img alt="" /></div>
+<script>
+  const lb = document.getElementById('lightbox');
+  document.querySelectorAll('.photos img').forEach(img => img.addEventListener('click', () => {
+    lb.querySelector('img').src = img.src; lb.querySelector('img').alt = img.alt; lb.classList.add('active');
+  }));
+  lb.addEventListener('click', () => lb.classList.remove('active'));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('active'); });
+</script>
+</body>
+</html>
