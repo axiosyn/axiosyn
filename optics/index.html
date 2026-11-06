@@ -4,9 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Critical-angle refractometry · axiosyn</title>
-<meta name="description" content="Self-published papers by Ierotheos Katsoulis on critical-angle refractometry of water, Intralipid and milk cream: polarization-resolved measurements, a polarization bias of the derivative method, and instrument-corrected refractive indices." />
+<meta name="description" content="Self-published papers by Ierotheos Katsoulis on critical-angle refractometry of water, Intralipid and milk cream: polarization-resolved measurements, a polarization bias of the derivative method, instrument-corrected refractive indices, and the scattering of undiluted Intralipid." />
 <meta property="og:title" content="Critical-angle refractometry · axiosyn" />
-<meta property="og:description" content="Three self-published papers on polarization-resolved critical-angle refractometry of water, Intralipid and milk cream." />
+<meta property="og:description" content="Four self-published papers on polarization-resolved critical-angle refractometry of water, Intralipid and milk cream." />
 <meta property="og:image" content="https://axiosyn.com/optics/img/optics-2.jpg" />
 <meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -184,13 +184,13 @@
     <div class="label">Research · Optics · 2020–2026</div>
     <h1>Critical-angle <em>refractometry</em><br/> of water, Intralipid and cream.</h1>
     <p class="hero-sub">
-      Three self-published papers by <strong>Ierotheos Katsoulis</strong>, from measurements made with a prism-coupling refractometer at the
+      Four self-published papers by <strong>Ierotheos Katsoulis</strong>, from measurements made with a prism-coupling refractometer at the
       <strong>Electronic Devices and Materials Laboratory, University of West Attica</strong>. They cover polarization-resolved refractive indices of water,
-      a polarization bias of the standard derivative method, and instrument-corrected indices of turbid media.
+      a polarization bias of the standard derivative method, instrument-corrected indices of turbid media, and what the same data can and cannot say about scattering.
     </p>
     <div class="cta-row">
       <a href="#papers" class="btn">→ Read the papers</a>
-      <a href="katsoulis-critical-angle-refractometry-2026.zip" class="btn secondary" download>Download everything (3.9 MB)</a>
+      <a href="katsoulis-critical-angle-refractometry-2026.zip" class="btn secondary" download>Download everything (5.1 MB)</a>
     </div>
   </section>
 
@@ -220,9 +220,17 @@
         <div>
           <span class="paper-meta">Turbid media · 7 pages</span>
           <h3>Complex refractive index of Intralipid and milk cream by instrument-corrected critical-angle refractometry</h3>
-          <p>Intralipid at 25 °C: n = 1.3691, 1.3595 and 1.3515 at 532, 964 and 1551 nm (± 0.0008), with TE and TM in agreement. Milk cream does not yield a reliable index by this method, and the paper shows why.</p>
+          <p>Intralipid-20 % at 25 °C: n = 1.3691, 1.3595 and 1.3515 at 532, 964 and 1551 nm (± 0.002, ± 0.002, ± 0.0008), with TE and TM in agreement. Milk cream does not yield a reliable index by this method, and the paper shows why.</p>
         </div>
         <a class="btn" href="papers/Paper2_Intralipid_cream_refractive_index.pdf">PDF ↓</a>
+      </article>
+      <article class="paper">
+        <div>
+          <span class="paper-meta">Turbid media · 10 pages</span>
+          <h3>Coherent scattering of undiluted Intralipid-20 % measured by critical-angle reflectometry</h3>
+          <p>Fitting the whole reflectance edge shows that undiluted Intralipid scatters about half as strongly as scaled-up dilute data predict. It also shows the limits: n is good to about 10⁻³, k only to tens of percent, and the derivative method's k is biased low by back-scattered light.</p>
+        </div>
+        <a class="btn" href="papers/Paper3_Intralipid_coherent_scattering.pdf">PDF ↓</a>
       </article>
       <article class="paper">
         <div>
@@ -242,7 +250,9 @@
       <div class="finding"><span class="num">+3 to +8 × 10⁻⁵</span><p>Apparent birefringence the derivative method reports for isotropic water. It scales with (n<sub>p</sub>/n)² − 1.</p></div>
       <div class="finding"><span class="num">± 5 × 10⁻⁴</span><p>Index offset set by the direction of table rotation. Averaging both directions removes it.</p></div>
       <div class="finding"><span class="num">6.4 ×</span><p>How much the extinction coefficient would be overestimated if the artefact were read as absorption (water, 1551 nm).</p></div>
-      <div class="finding"><span class="num">1.3515</span><p>Refractive index of Intralipid at 1551 nm and 25 °C, relative to air (± 0.0008).</p></div>
+      <div class="finding"><span class="num">1.3515</span><p>Refractive index of Intralipid-20 % at 1551 nm and 25 °C, relative to air (± 0.0008).</p></div>
+      <div class="finding"><span class="num">≈ 0.5 ×</span><p>Scattering of undiluted Intralipid-20 % relative to dilute measurements scaled up, at 964 and 1551 nm: the droplets are packed closely enough to scatter dependently.</p></div>
+      <div class="finding"><span class="num">up to 4 ×</span><p>How far the derivative method underestimates k in a turbid sample, because back-scattered light raises the edge. Its n stays within 5 × 10⁻⁴.</p></div>
     </div>
   </section>
 
@@ -250,14 +260,14 @@
     <div class="section-head"><span class="section-num">/ 03</span><h2>Data &amp; code</h2></div>
     <div class="two-col">
       <div class="prose">
-        <p>The download contains the three papers, all figures, the complete analysis code (Python), summary result tables, and a representative sample of 16 raw scans. A short script runs the analysis on the sample and prints the results next to the values in the papers; single scans agree to about 1 × 10⁻⁴.</p>
+        <p>The download contains the four papers, all figures, the complete analysis code (Python), summary result tables, and a representative sample of 16 raw scans. A short script runs the analysis on the sample and prints the results next to the values in the papers; single scans agree to about 1 × 10⁻⁴.</p>
         <p class="dim">The full measurement dataset was recorded at the Electronic Devices and Materials Laboratory (EDML), University of West Attica. It may be the property of the laboratory and is not disclosed. The sample files are shared for verification only and are not covered by the open licenses below.</p>
-        <a href="katsoulis-critical-angle-refractometry-2026.zip" class="btn" download>→ Download package (zip, 3.9 MB)</a>
+        <a href="katsoulis-critical-angle-refractometry-2026.zip" class="btn" download>→ Download package (zip, 5.1 MB)</a>
       </div>
       <div class="specs">
         <h4>Package contents</h4>
-        <div class="spec-row"><span>papers/</span><span>3 PDFs</span></div>
-        <div class="spec-row"><span>figures/</span><span>10 PNG</span></div>
+        <div class="spec-row"><span>papers/</span><span>4 PDFs</span></div>
+        <div class="spec-row"><span>figures/</span><span>13 PNG</span></div>
         <div class="spec-row"><span>code/</span><span>Python · MIT</span></div>
         <div class="spec-row"><span>data_sample/</span><span>16 raw scans</span></div>
         <div class="spec-row"><span>instrument</span><span>Metricon 2010/M</span></div>
@@ -273,7 +283,7 @@
       <p>Measurements by Ierotheos Katsoulis at the Electronic Devices and Materials Laboratory (EDML), Department of Electrical and Electronic Engineering, University of West Attica, during an MSc by Research supervised by Prof. Konstantinos Moutzouris (2020–2021). Analysis and writing: Ierotheos Katsoulis, 2026. These are self-published preprints and have not been peer-reviewed.</p>
       <p class="dim">Papers and figures are licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>: use them for anything, with credit. Code is MIT-licensed. To cite:</p>
       <div class="cite">I. Katsoulis, "Apparent birefringence in critical-angle refractometry: a polarization bias of the derivative method," self-published preprint, axiosyn.com/optics, November 2026.</div>
-      <p class="dim">The other two papers are cited the same way, by title.</p>
+      <p class="dim">The other three papers are cited the same way, by title.</p>
     </div>
   </section>
 
