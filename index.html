@@ -3,19 +3,228 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex, nofollow, noarchive, noimageindex" />
-<meta name="googlebot" content="noindex, nofollow, noarchive" />
-<meta name="referrer" content="no-referrer" />
-<title>axiosyn</title>
+<title>Axiosyn · From the first sketch to the finished product</title>
+<meta name="description" content="Axiosyn is the independent engineering studio of Ierotheos Katsoulis, an electrical and electronics engineer: the QuestLife habit RPG, MuscleGain, critical-angle refractometry research and custom PCB design from schematic to product." />
+<link rel="canonical" href="https://axiosyn.com/" />
+<meta name="theme-color" content="#0a0e0c" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://axiosyn.com/" />
+<meta property="og:title" content="Axiosyn · From the first sketch to the finished product" />
+<meta property="og:description" content="Apps, research and hardware by Ierotheos Katsoulis, electrical and electronics engineer." />
+<meta property="og:image" content="https://axiosyn.com/img/og-axiosyn.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Axiosyn",
+  "url": "https://axiosyn.com/",
+  "logo": "https://axiosyn.com/icon-512.png",
+  "email": "axiosyn@gmail.com",
+  "founder": { "@type": "Person", "name": "Ierotheos Katsoulis", "jobTitle": "Electrical and Electronics Engineer" }
+}
+</script>
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: #000;
-    color: #000;
-  }
+:root{--bg:#0a0e0c;--g:#7dffb1;--t:#e8f0ea;--m:#8fa597;--line:rgba(125,255,177,.14);--card:rgba(10,20,15,.82)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--t);font-family:"Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/40px 40px;opacity:.35;pointer-events:none;z-index:0}
+a{color:inherit}
+img{display:block;max-width:100%}
+.w{width:min(1120px,100% - 32px);margin:auto;position:relative;z-index:1}
+
+nav{display:flex;align-items:center;padding:26px 0}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--g)}
+.logo svg{height:34px;width:auto}
+.logo span{font-family:Montserrat,sans-serif;font-weight:500;letter-spacing:.32em;font-size:19px}
+nav .links{margin-left:auto;display:flex;gap:28px;font-family:"JetBrains Mono",monospace;font-size:13px}
+nav .links a{color:var(--m);text-decoration:none}
+nav .links a:hover{color:var(--g)}
+
+.hero{padding:90px 0 60px}
+.tag{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--g);letter-spacing:.08em}
+h1{font-size:64px;line-height:1.04;margin:18px 0 0;font-weight:700;max-width:940px;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--g)}
+.sub{color:var(--m);font-size:19px;max-width:660px;margin:22px 0 0;line-height:1.55}
+
+.values{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.values div{padding:24px 22px}
+.values div+div{border-left:1px solid var(--line)}
+.values h3{font-size:18px;margin:0 0 8px}
+.values h3::before{content:"■ ";color:var(--g);font-size:11px;vertical-align:3px}
+.values p{margin:0;color:var(--m);line-height:1.5;font-size:15px}
+
+h2{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--g);letter-spacing:.14em;font-weight:500;margin:76px 0 22px;scroll-margin-top:20px}
+.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.grid.rs{grid-template-columns:1fr 1.3fr}
+.card{border:1px solid var(--line);background:var(--card);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;display:block}
+a.card{transition:border-color .2s,transform .2s}
+a.card:hover{border-color:rgba(125,255,177,.5);transform:translateY(-2px)}
+.card .img{height:250px;background-size:cover;background-position:center;position:relative}
+.card .body{padding:22px 24px 24px}
+.card h3{margin:8px 0 6px;font-size:26px}
+.card p{margin:0;color:var(--m);line-height:1.5}
+.pill{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em;padding:4px 9px;border:1px solid var(--g);color:var(--g);border-radius:99px}
+.pill.dim{border-color:var(--m);color:var(--m)}
+.more{display:inline-block;margin-top:16px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--g)}
+.credit{margin-top:14px!important;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--g)!important;opacity:.85}
+
+.ql{background-image:url(/questlife/img/sky.jpg)}
+.ql img{position:absolute;left:50%;top:50%;translate:-50% -50%;width:110px}
+.mg{background:#0b0b0c;display:grid;place-content:center;font-weight:700;font-size:44px;letter-spacing:.02em}
+.mg span{color:#d6ff3d}
+.op{background:url(/optics/img/optics-2.jpg) center/cover;min-height:300px}
+.rs .body{padding:34px}
+
+.pcb{display:grid;grid-template-columns:1fr 1fr}
+.pcb .main{background:url(/img/fencing-bench.jpg) center 40%/cover;min-height:460px}
+.pcb .body{padding:34px}
+.steps{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0;list-style:none;font-family:"JetBrains Mono",monospace;font-size:12px}
+.steps li{padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(125,255,177,.05)}
+.steps li:not(:last-child)::after{content:" →";color:var(--g)}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+.thumbs a{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:1;cursor:zoom-in}
+.thumbs img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.thumbs a:hover img{transform:scale(1.05)}
+
+.tool{display:flex;align-items:flex-start;gap:28px;padding:28px 30px}
+.tool .ic{flex:none;width:64px;height:64px;border-radius:16px;border:1px solid var(--g);display:grid;place-content:center}
+.tool h3{margin:6px 0 4px}
+.facts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px;color:var(--m);font-size:15px;line-height:1.45}
+.facts li::before{content:"› ";color:var(--g);font-family:"JetBrains Mono",monospace}
+.facts b{color:var(--t);font-weight:500}
+.tool .soon{margin-left:auto;flex:none;font-family:"JetBrains Mono",monospace;font-size:13px;border:1px solid var(--line);color:var(--m);padding:12px 18px;border-radius:10px}
+
+.contact{margin:80px 0 0;padding:50px;border:1px solid var(--g);border-radius:18px;display:flex;align-items:center;gap:30px;scroll-margin-top:20px}
+.contact h2{all:unset;display:block;font-size:36px;font-weight:700}
+.contact p{margin:10px 0 0;color:var(--m)}
+.contact a{margin-left:auto;font-family:"JetBrains Mono",monospace;color:var(--bg);background:var(--g);padding:14px 22px;border-radius:10px;text-decoration:none;font-weight:700;white-space:nowrap}
+footer{padding:40px 0 60px;color:var(--m);font-family:"JetBrains Mono",monospace;font-size:12px}
+
+#lb{position:fixed;inset:0;background:rgba(5,8,6,.94);display:none;place-items:center;z-index:10;padding:24px;cursor:zoom-out}
+#lb.on{display:grid}
+#lb img{max-width:100%;max-height:calc(100vh - 48px);border-radius:10px}
+
+@media (max-width:900px){
+  h1{font-size:48px}
+  .values{grid-template-columns:1fr 1fr}
+  .values div:nth-child(3){border-left:0}
+  .values div:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:760px){
+  nav .links{display:none}
+  h1{font-size:38px}
+  .hero{padding:44px 0 36px}
+  .sub{font-size:17px}
+  .values,.grid,.grid.rs,.pcb{grid-template-columns:1fr}
+  .values div+div{border-left:0;border-top:1px solid var(--line)}
+  .pcb .main{min-height:320px}
+  .rs .body,.pcb .body{padding:24px}
+  .tool,.contact{flex-direction:column;align-items:flex-start}
+  .tool .soon,.contact a{margin-left:0}
+  .contact{padding:28px}
+  .contact h2{font-size:28px}
+  h2{margin-top:56px}
+}
 </style>
 </head>
-<body></body>
+<body>
+<div class="w">
+
+<nav>
+  <a class="logo" href="/" aria-label="Axiosyn home">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="245 135 765 665" aria-hidden="true"><defs><clipPath id="ax-clip"><rect x="0" y="252" width="1300" height="461"/></clipPath></defs><g fill="none" stroke="#7dffb1"><path d="M681 142V793M255 478H1000" stroke-width="43.05"/><g clip-path="url(#ax-clip)" stroke-width="41" stroke-miterlimit="8"><path d="M266 740L522 275L681 478L897 740"/><path d="M925 230L681 478L457 740"/></g></g><circle cx="681" cy="478" r="61.5" fill="#7dffb1"/></svg>
+    <span>AXIOSYN</span>
+  </a>
+  <div class="links"><a href="#products">products</a><a href="#research">research</a><a href="#hardware">hardware</a><a href="#tools">tools</a><a href="#contact">contact</a></div>
+</nav>
+
+<header class="hero">
+  <div class="tag">// axiosyn · independent engineering studio</div>
+  <h1>From the first sketch <em>to the finished product.</em></h1>
+  <p class="sub">I'm Ierotheos Katsoulis, an electrical &amp; electronics engineer. Axiosyn is where I design, build and test apps, hardware and research.</p>
+</header>
+
+<section class="values" aria-label="What Axiosyn stands for">
+  <div><h3>Seen through</h3><p>From schematic to shipped board, from first build to the store listing. Projects get finished.</p></div>
+  <div><h3>Measured, not guessed</h3><p>Research habits carried into everything: test it, measure it, write down what you found.</p></div>
+  <div><h3>Fair to the people using it</h3><p>No ads. Free where it can be, and clear about what costs money.</p></div>
+  <div><h3>Open where it counts</h3><p>Papers ship with their code and data, so anyone can check the work.</p></div>
+</section>
+
+<h2 id="products">&gt; PRODUCTS</h2>
+<div class="grid">
+  <a class="card" href="/questlife/"><div class="img ql"><img src="/questlife/brand/emblem.png" alt="" width="110" height="110" /></div><div class="body"><span class="pill">LIVE · GOOGLE PLAY</span><h3>QuestLife</h3><p>The habit tracker that's actually an RPG. Real habits become quests that level up your hero.</p></div></a>
+  <a class="card" href="/musclegain/"><div class="img mg" aria-hidden="true">MUSCLE<span>GAIN</span></div><div class="body"><span class="pill">FREE · WEB</span><h3>MuscleGain</h3><p>A training program with exercise photos and a 7-day meal plan, built from a few questions.</p></div></a>
+</div>
+
+<h2 id="research">&gt; RESEARCH</h2>
+<div class="grid rs">
+  <a class="card op" href="/optics/" aria-label="Critical-angle refractometry setup"></a>
+  <a class="card" href="/optics/"><div class="body"><span class="pill">4 PAPERS · OPEN CODE &amp; DATA</span><h3>Critical-angle refractometry</h3><p>Measurements of how light bends in water, Intralipid and milk cream: polarisation-resolved readings, instrument corrections and scattering, with everything needed to repeat them.</p><p class="credit">Measured at the Electronic Devices and Materials Laboratory (EDML), University of West Attica.</p><span class="more">read the papers →</span></div></a>
+</div>
+
+<h2 id="hardware">&gt; PCB DESIGN, FROM SCHEMATIC TO PRODUCT</h2>
+<article class="card pcb">
+  <div class="main" role="img" aria-label="Workbench with a digital microscope inspecting a populated scoring board"></div>
+  <div class="body">
+    <span class="pill">CLIENT PRODUCT · SHIPPED</span>
+    <h3>Electronic scoring board for fencing equipment</h3>
+    <p>Designed and built for a sports equipment manufacturer. Every board ships with the AXIOSYN mark on its silkscreen.</p>
+    <p class="credit">In collaboration with G. Siamiotis.</p>
+    <ul class="steps"><li>schematic</li><li>PCB layout</li><li>SMD assembly</li><li>microscope rework</li><li>firmware</li><li>3D-printed enclosure</li><li>shipped</li></ul>
+    <div class="thumbs">
+      <a href="/img/fencing-pcb-closeup.jpg" data-lb><img src="/img/fencing-pcb-closeup-thumb.jpg" alt="The assembled scoring board from above, with the AXIOSYN mark on the silkscreen" loading="lazy" width="360" height="360" /></a>
+      <a href="/img/fencing-pcb-wide.jpg" data-lb><img src="/img/fencing-pcb-wide-thumb.jpg" alt="The populated board on the workbench" loading="lazy" width="360" height="360" /></a>
+      <a href="/img/fencing-enclosure.jpg" data-lb><img src="/img/fencing-enclosure-thumb.jpg" alt="The finished 3D-printed enclosure with three jack connectors" loading="lazy" width="360" height="360" /></a>
+    </div>
+  </div>
+</article>
+
+<h2 id="tools">&gt; FREE TOOLS</h2>
+<article class="card tool">
+  <div class="ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#7dffb1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.5"/><rect x="13.5" y="6" width="8" height="12" rx="1.5"/><path d="M10.5 12h3"/></svg></div>
+  <div>
+    <span class="pill dim">COMING SOON</span>
+    <h3>Video Merger</h3>
+    <p>Join clips end to end at their original quality.</p>
+    <ul class="facts">
+      <li><b>Stays on your device.</b> Your videos are never uploaded; all the work happens in your own browser.</li>
+      <li><b>One-time download.</b> The first time you use it, your browser downloads the video engine it needs (about 30 MB).</li>
+      <li><b>Up to 2 GB.</b> All the clips in one merge can add up to 2 GB at most.</li>
+    </ul>
+  </div>
+  <span class="soon">coming soon</span>
+</article>
+
+<section class="contact" id="contact">
+  <div><h2>Got a project? Let's build it.</h2><p>From research to a full product build, or a board that just needs fresh eyes.</p></div>
+  <a href="mailto:axiosyn@gmail.com">axiosyn@gmail.com</a>
+</section>
+
+<footer>© 2026 AXIOSYN · axiosyn.com</footer>
+</div>
+
+<div id="lb" role="dialog" aria-label="Photo" aria-hidden="true"><img alt="" /></div>
+<script>
+(function(){
+  var lb=document.getElementById('lb'),img=lb.querySelector('img');
+  function close(){lb.classList.remove('on');lb.setAttribute('aria-hidden','true');img.removeAttribute('src')}
+  document.querySelectorAll('[data-lb]').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();img.src=a.href;img.alt=a.querySelector('img').alt;lb.classList.add('on');lb.setAttribute('aria-hidden','false')});
+  });
+  lb.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+})();
+</script>
+</body>
 </html>
