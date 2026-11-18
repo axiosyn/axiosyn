@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+# Google Images: skip the hero layer files (a body, head or face alone looks broken
+# in image results) and the wide wordmark (cropped to a square it reads "Lif").
+# Pages still load and render them; only image search ignores them.
+User-agent: Googlebot-Image
+Disallow: /questlife/hero/parts/
+Disallow: /questlife/brand/wordmark.png
+
 Sitemap: https://axiosyn.com/sitemap.xml
