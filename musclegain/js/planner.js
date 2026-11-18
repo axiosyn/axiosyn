@@ -86,19 +86,41 @@
 
   /* ================= TRAINING PROGRAM ================= */
 
+  /* Each day type has the lifts it always starts with (must) and the slots it may add (pool).
+     The planner fills the remaining places across the whole week so the weekly volume per muscle
+     follows the chosen physique's emphasis (MG.PHYSIQUES[].emph). */
+  const UPPER_POOL = ['chest_press', 'chest_incline', 'chest_fly', 'shoulder_press', 'lateral', 'rear_delt', 'row', 'vertical_pull', 'biceps', 'triceps', 'core', 'traps'];
+  const LOWER_POOL = ['squat', 'hinge', 'single_leg', 'quad_iso', 'ham_curl', 'glute', 'calves', 'core'];
   const TEMPLATES = {
-    fullA: { name: 'Full Body', slots: ['squat', 'chest_press', 'row', 'hinge', 'lateral', 'biceps', 'core', 'calves'] },
-    fullB: { name: 'Full Body', slots: ['hinge', 'shoulder_press', 'vertical_pull', 'single_leg', 'chest_fly', 'triceps', 'core', 'rear_delt'] },
-    fullC: { name: 'Full Body', slots: ['squat', 'chest_incline', 'row', 'ham_curl', 'shoulder_press', 'biceps', 'triceps', 'core'] },
-    upperA: { name: 'Upper Body', slots: ['chest_press', 'row', 'shoulder_press', 'vertical_pull', 'lateral', 'triceps', 'biceps', 'rear_delt'] },
-    upperB: { name: 'Upper Body', slots: ['vertical_pull', 'chest_incline', 'row', 'lateral', 'chest_fly', 'biceps', 'triceps', 'rear_delt'] },
-    lowerA: { name: 'Lower Body', slots: ['squat', 'hinge', 'single_leg', 'ham_curl', 'calves', 'core', 'quad_iso', 'glute'] },
-    lowerB: { name: 'Lower Body', slots: ['hinge', 'squat', 'single_leg', 'quad_iso', 'glute', 'calves', 'core', 'ham_curl'] },
-    push: { name: 'Push · Chest, Shoulders, Triceps', slots: ['chest_press', 'shoulder_press', 'chest_incline', 'lateral', 'triceps', 'chest_fly', 'triceps', 'core'] },
-    pull: { name: 'Pull · Back & Biceps', slots: ['vertical_pull', 'row', 'rear_delt', 'biceps', 'row', 'biceps', 'traps', 'core'] },
-    legs: { name: 'Legs', slots: ['squat', 'hinge', 'single_leg', 'ham_curl', 'quad_iso', 'calves', 'core', 'glute'] },
-    glutes: { name: 'Glutes & Hamstrings', slots: ['glute', 'hinge', 'single_leg', 'glute', 'ham_curl', 'calves', 'core', 'squat'] },
+    fullA: { name: 'Full Body', must: ['squat', 'chest_press', 'row'], pool: UPPER_POOL.concat(LOWER_POOL) },
+    fullB: { name: 'Full Body', must: ['hinge', 'shoulder_press', 'vertical_pull'], pool: UPPER_POOL.concat(LOWER_POOL) },
+    fullC: { name: 'Full Body', must: ['squat', 'chest_incline', 'row'], pool: UPPER_POOL.concat(LOWER_POOL) },
+    upperA: { name: 'Upper Body', must: ['chest_press', 'row'], pool: UPPER_POOL },
+    upperB: { name: 'Upper Body', must: ['chest_incline', 'vertical_pull'], pool: UPPER_POOL },
+    // Small shoulder and arm accessories are allowed on leg days when the goal needs more upper-body volume.
+    lowerA: { name: 'Lower Body', must: ['squat', 'hinge'], pool: LOWER_POOL.concat(['lateral', 'rear_delt', 'biceps', 'triceps']) },
+    lowerB: { name: 'Lower Body', must: ['hinge', 'squat'], pool: LOWER_POOL.concat(['lateral', 'rear_delt', 'biceps', 'triceps']) },
+    push: { name: 'Push · Chest, Shoulders, Triceps', must: ['chest_press', 'shoulder_press'], pool: ['chest_press', 'chest_incline', 'chest_fly', 'shoulder_press', 'lateral', 'triceps', 'core'] },
+    pull: { name: 'Pull · Back & Biceps', must: ['vertical_pull', 'row'], pool: ['row', 'vertical_pull', 'rear_delt', 'biceps', 'traps', 'lateral', 'core'] },
+    legs: { name: 'Legs', must: ['squat', 'hinge'], pool: LOWER_POOL },
+    glutes: { name: 'Glutes & Hamstrings', must: ['hinge', 'glute'], pool: ['glute', 'hinge', 'single_leg', 'ham_curl', 'squat', 'calves', 'core', 'quad_iso'] },
   };
+  /* Slots that may appear twice in one session (different exercises). */
+  const REPEATABLE = { row: 2, biceps: 2, triceps: 2, lateral: 2, glute: 2, chest_fly: 1 };
+  const UPPER_EXTRAS = ['lateral', 'rear_delt', 'biceps', 'triceps'];
+  const LEG_DAYS = ['lowerA', 'lowerB', 'legs', 'glutes'];
+
+  /* How many sets each slot puts on each muscle (compounds give half credit to helpers). */
+  const HITS = {
+    chest_press: { chest: 1, tri: 0.5, front: 0.5 }, chest_incline: { chest: 1, front: 0.5, tri: 0.5 }, chest_fly: { chest: 1 },
+    shoulder_press: { front: 1, side: 0.5, tri: 0.5 }, lateral: { side: 1 }, rear_delt: { rear: 1 },
+    row: { back: 1, bi: 0.5, rear: 0.5 }, vertical_pull: { back: 1, bi: 0.5 }, traps: { back: 0.5 },
+    squat: { quad: 1, glute: 0.5 }, hinge: { ham: 1, glute: 1 }, single_leg: { quad: 1, glute: 0.5 }, quad_iso: { quad: 1 },
+    ham_curl: { ham: 1 }, glute: { glute: 1 }, calves: { calf: 1 }, biceps: { bi: 1 }, triceps: { tri: 1 }, core: { abs: 1 }, cardio: {},
+  };
+  P.HITS = HITS;
+  P.MUSCLES = ['chest', 'back', 'front', 'side', 'rear', 'bi', 'tri', 'quad', 'ham', 'glute', 'calf', 'abs'];
+  const MAIN_MUSCLE = (slot) => { const h = HITS[slot] || {}; return Object.keys(h).sort((x, y) => h[y] - h[x])[0]; };
 
   /* With very little pulling equipment a body-part split leaves "pull" days empty, so train the whole body each session instead. */
   function limitedPulling(a) {
@@ -140,14 +162,18 @@
     return req.split('|').some((g) => g.split('+').every((k) => k === 'bw' || eq.has(k)));
   }
 
-  function candidates(slot, eq, lvl, seen) {
+  /* The slot that actually supplies exercises with this equipment (a missing machine falls back to a related slot). */
+  function resolveSlot(slot, eq, lvl, seen) {
     seen = seen || new Set();
-    if (seen.has(slot)) return [];
+    if (seen.has(slot)) return null;
     seen.add(slot);
-    const list = (MG.EX[slot] || []).filter((e) => hasReq(e.req, eq) && (e.lvl || 0) <= lvl);
-    if (list.length) return list;
+    if ((MG.EX[slot] || []).some((e) => hasReq(e.req, eq) && (e.lvl || 0) <= lvl)) return slot;
     const fb = MG.SLOTS[slot].fallback;
-    return fb ? candidates(fb, eq, lvl, seen) : [];
+    return fb ? resolveSlot(fb, eq, lvl, seen) : null;
+  }
+  function candidates(slot, eq, lvl) {
+    const s = resolveSlot(slot, eq, lvl);
+    return s ? MG.EX[s].filter((e) => hasReq(e.req, eq) && (e.lvl || 0) <= lvl) : [];
   }
   P.candidates = candidates;
 
@@ -157,14 +183,16 @@
     let sets, reps, restSec;
     if (kind === 'compound') {
       sets = [3, 3, 4][lvl] + (style === 'mass' && first && lvl > 0 ? 1 : 0);
-      reps = { mass: first ? '5–8' : '6–10', hyp: first ? '6–10' : '8–12', athletic: first ? '5–8' : '8–10', lean: '10–12' }[style];
-      restSec = { mass: first ? 180 : 120, hyp: first ? 150 : 90, athletic: first ? 120 : 90, lean: 75 }[style];
+      // Lean goals lift heavy too: in a calorie deficit, heavier work is what keeps the muscle.
+      reps = { mass: first ? '5–8' : '6–10', hyp: first ? '6–10' : '8–12', athletic: first ? '5–8' : '8–10', lean: first ? '6–10' : '8–12' }[style];
+      restSec = { mass: first ? 180 : 120, hyp: first ? 150 : 90, athletic: first ? 120 : 90, lean: first ? 120 : 90 }[style];
+      if (ex.heavy && !first) restSec = Math.max(restSec, style === 'lean' ? 120 : 150);
       if (ex.bwLoad) reps = '6–15';
-      if (ex.id === 'Barbell_Deadlift') reps = style === 'lean' ? '6–8' : first ? '4–6' : '5–8';
+      if (ex.id === 'Barbell_Deadlift') reps = first ? '4–6' : '5–8';
     } else if (kind === 'iso') {
       sets = [2, 3, 3][lvl] + (lvl === 2 && (style === 'hyp' || style === 'mass') ? 1 : 0);
-      reps = { mass: '10–12', hyp: '12–15', athletic: '10–15', lean: '15–20' }[style];
-      restSec = style === 'lean' ? 45 : 60;
+      reps = { mass: '10–12', hyp: '12–15', athletic: '10–15', lean: '12–15' }[style];
+      restSec = 60;
       if (ex.bwLoad) reps = '10–20';
     } else {
       sets = 3;
@@ -174,6 +202,13 @@
     if (ex.bwLoad) restSec = Math.min(restSec, 90); // unweighted moves do not need powerlifting rests
     const rest = restSec >= 120 ? restSec / 60 + ' min' : restSec + ' s';
     return { sets, reps, rest, restSec, workSec: 40 };
+  }
+  /* Sets a slot will get, used while planning the week before exercises are picked. */
+  function estSets(slot, style, lvl, first) {
+    const kind = MG.SLOTS[slot].kind;
+    if (kind === 'compound') return [3, 3, 4][lvl] + (style === 'mass' && first && lvl > 0 ? 1 : 0);
+    if (kind === 'iso') return [2, 3, 3][lvl] + (lvl === 2 && (style === 'hyp' || style === 'mass') ? 1 : 0);
+    return kind === 'core' ? 3 : 0;
   }
 
   function makeItem(ex, slot, style, lvl, first) {
@@ -195,88 +230,272 @@
     return a.equipment || (a.location === 'gym' ? all : []);
   }
 
-  P.workout = function (a) {
+  /* Weekly sets per muscle for a list of days (exercises with real set counts). */
+  P.weeklySets = function (days) {
+    const t = {};
+    P.MUSCLES.forEach((m) => (t[m] = 0));
+    days.forEach((d) => d.exercises.forEach((e) => {
+      for (const [m, f] of Object.entries(HITS[e.slot] || {})) t[m] += f * e.sets;
+    }));
+    return t;
+  };
+
+  /* The 4-week block: weeks 1-2 use phase A, weeks 3-4 phase B. Phase B keeps every session's structure and
+     main lift, and swaps each other exercise for a variation that trains the same muscle, never an easier one. */
+  const BLOCK_WEEKS = 4;
+  P.BLOCK_WEEKS = BLOCK_WEEKS;
+
+  /* ---------- phase A: choose the slots for the whole week, then the exercises ---------- */
+  function buildPhaseA(a) {
     const phys = P.physique(a);
+    const style = phys.style;
     const lvl = LEVEL[a.experience] || 0;
     const days = clamp(a.days, 2, 6);
     const split = splitFor(a, phys);
     const count = COUNT_FOR_MIN[a.minutes] || 6;
     const homeDays = a.location === 'both' ? clamp(a.homeDays == null ? Math.floor(days / 2) : a.homeDays, 0, days) : 0;
-    const usage = {};
-    const seenTpl = {};
-    const totalTpl = {};
-    split.forEach((k) => (totalTpl[TEMPLATES[k].name] = (totalTpl[TEMPLATES[k].name] || 0) + 1));
+    const emph = phys.emph || {};
 
-    const out = split.map((key, i) => {
+    // 1. Each day's setting, equipment and fixed opening lifts.
+    const plan = split.map((key, i) => {
       const tpl = TEMPLATES[key];
-      let where = a.location === 'both'
+      const where = a.location === 'both'
         ? (Math.floor(((i + 1) * homeDays) / days) > Math.floor((i * homeDays) / days) ? 'home' : 'gym')
         : a.location;
       const eqList = equipmentFor(a, where);
       const eq = new Set(eqList);
-
-      let slots = tpl.slots.slice();
-      if (phys.focus === 'glutes' && !slots.includes('glute')) slots.splice(3, 0, 'glute');
-      const ends = phys.style === 'lean' ? ['cardio'] : phys.style === 'athletic' ? ['core'] : [];
-      const boost = phys.boost || [];
-      const ranked = slots
-        .map((s, idx) => ({ s, idx, pr: boost.includes(s) ? Math.min(idx, 3.5) : idx }))
-        .filter((x) => !ends.includes(x.s))
-        .sort((x, y) => x.pr - y.pr || x.idx - y.idx);
-
-      const usedToday = new Set();
-      const pick = (slot) => {
-        const c = candidates(slot, eq, lvl);
-        let best = null, bestScore = Infinity;
-        c.forEach((ex, n) => {
-          if (usedToday.has(ex.id)) return;
-          const sc = (usage[ex.id] || 0) * 100 + n;
-          if (sc < bestScore) { best = ex; bestScore = sc; }
-        });
-        if (best) { usedToday.add(best.id); usage[best.id] = (usage[best.id] || 0) + 1; }
-        return best;
-      };
-
-      const chosen = [];
-      for (const r of ranked) {
-        if (chosen.length >= count - ends.length) break;
-        const ex = pick(r.s);
-        if (ex) chosen.push({ ex, slot: r.s, idx: r.idx });
-      }
-      // Safety net: if the equipment cannot fill this session, pad it with whatever useful work is possible.
-      const want = Math.min(count - ends.length, 4);
-      for (const s of ['core', 'hinge', 'single_leg', 'chest_press', 'glute', 'squat', 'core', 'cardio']) {
-        if (chosen.length >= want) break;
-        if (ends.includes(s)) continue;
-        const ex = pick(s);
-        if (ex) chosen.push({ ex, slot: s, idx: 50 + chosen.length });
-      }
-      chosen.sort((x, y) => x.idx - y.idx);
-      ends.forEach((s) => { const ex = pick(s); if (ex) chosen.push({ ex, slot: s, idx: 99 }); });
-
-      let firstDone = false;
-      const exercises = chosen.map(({ ex, slot }) => {
-        const isFirst = !firstDone && MG.SLOTS[slot].kind === 'compound';
-        if (isFirst) firstDone = true;
-        return makeItem(ex, slot, phys.style, lvl, isFirst);
-      });
-
-      seenTpl[tpl.name] = (seenTpl[tpl.name] || 0) + 1;
-      const suffix = totalTpl[tpl.name] > 1 ? ' ' + 'ABCD'[seenTpl[tpl.name] - 1] : '';
-      return {
-        name: tpl.name.replace(' ·', suffix + ' ·') + (tpl.name.includes(' ·') ? '' : suffix),
-        weekday: DAY_MAP[days][i], where, eq: eqList, exercises, minutes: dayMinutes(exercises),
-      };
+      const tail = style === 'lean' ? ['cardio'] : []; // conditioning finisher at the end
+      const must = tpl.must.concat(style === 'athletic' ? ['core'] : []);
+      const slots = [];
+      must.forEach((s) => { const r = resolveSlot(s, eq, lvl); if (r && !slots.includes(r)) slots.push(r); });
+      return { key, tpl, where, eq, eqList, slots, room: count - tail.length, tail };
     });
 
+    // 2. Weekly targets per muscle, in proportion to the physique's emphasis.
+    const capacity = plan.reduce((t, d) => t + d.room, 0) * estSets('row', style, lvl, false) * 1.35;
+    const wSum = P.MUSCLES.reduce((t, m) => t + (emph[m] || 0), 0) || 1;
+    const target = {};
+    P.MUSCLES.forEach((m) => (target[m] = ((emph[m] || 0) / wSum) * capacity));
+    const have = {};
+    P.MUSCLES.forEach((m) => (have[m] = 0));
+    const credit = (slot, first) => {
+      const n = estSets(slot, style, lvl, first);
+      for (const [m, f] of Object.entries(HITS[slot] || {})) have[m] += f * n;
+    };
+    plan.forEach((d) => d.slots.forEach((s, k) => credit(s, k === 0)));
+
+    // 3. Fill the free places one round at a time across all days, always with the slot that best closes the
+    //    biggest gaps against the targets. Rounds keep the week balanced instead of front-loading Monday.
+    const compoundsIn = (d) => d.slots.filter((s) => MG.SLOTS[s].kind === 'compound').length;
+    const weekUses = (s) => plan.reduce((t, d) => t + d.slots.filter((x) => x === s).length, 0);
+    const score = (slot) => P.MUSCLES.reduce((t, m) => {
+      const f = (HITS[slot] || {})[m] || 0;
+      if (!f || !target[m]) return t;
+      return t + f * Math.max(0, target[m] - have[m]) / target[m];
+    }, 0);
+    let progress = true;
+    while (progress) {
+      progress = false;
+      for (const d of plan) {
+        if (d.slots.length >= d.room) continue;
+        let best = null, bestScore = 0;
+        for (const s0 of d.tpl.pool) {
+          const s = resolveSlot(s0, d.eq, lvl);
+          if (!s || s === 'cardio') continue;
+          const times = d.slots.filter((x) => x === s).length;
+          const legDay = LEG_DAYS.includes(d.key);
+          if (times >= (legDay && UPPER_EXTRAS.includes(s) ? 1 : REPEATABLE[s] || 1)) continue;
+          if (legDay && UPPER_EXTRAS.includes(s) && d.slots.filter((x) => UPPER_EXTRAS.includes(x)).length >= 2) continue;
+          // Each exercise at most twice a week: a slot with few options cannot be used more than that.
+          if (weekUses(s) >= candidates(s, d.eq, lvl).length * 2) continue;
+          if (MG.SLOTS[s].kind === 'compound' && compoundsIn(d) >= 4) continue;
+          if (times && candidates(s, d.eq, lvl).length <= times) continue; // a repeat needs a second exercise
+          const sc = score(s) * (times ? 0.8 : 1);
+          if (sc > bestScore + 1e-9) { best = s; bestScore = sc; }
+        }
+        if (!best) {
+          // Every target is met: use the remaining place on whatever the goal values most.
+          for (const s0 of d.tpl.pool) {
+            const s = resolveSlot(s0, d.eq, lvl);
+            if (!s || s === 'cardio' || d.slots.includes(s)) continue;
+            if (LEG_DAYS.includes(d.key) && UPPER_EXTRAS.includes(s) && d.slots.filter((x) => UPPER_EXTRAS.includes(x)).length >= 2) continue;
+            if (weekUses(s) >= candidates(s, d.eq, lvl).length * 2) continue;
+            const v = P.MUSCLES.reduce((t, m) => t + ((HITS[s] || {})[m] || 0) * (emph[m] || 0), 0);
+            if (!best || v > bestScore) { best = s; bestScore = v; }
+          }
+        }
+        if (best) { d.slots.push(best); credit(best, false); progress = true; }
+      }
+    }
+
+    // 4. Pick exercises: least used across the week first, and a proper loaded lift as each day's main lift.
+    const usage = {};
+    return plan.map((d, i) => {
+      const used = new Set();
+      const picks = [];
+      d.slots.concat(d.tail).forEach((slot) => {
+        const c = candidates(slot, d.eq, lvl);
+        const isMain = !picks.length && MG.SLOTS[slot].kind === 'compound';
+        let best = null, bestScore = Infinity;
+        c.forEach((ex, n) => {
+          if (used.has(ex.id)) return;
+          const sc = (usage[ex.id] || 0) * 100 + n + (ex.easy && lvl > 0 ? 500 : 0) + (isMain && (ex.noMain || ex.bwLoad) ? 300 : 0);
+          if (sc < bestScore) { best = ex; bestScore = sc; }
+        });
+        if (!best) return;
+        used.add(best.id);
+        usage[best.id] = (usage[best.id] || 0) + 1;
+        picks.push({ ex: best, slot });
+      });
+      // Main lift: the first compound, unless it is a weak choice and a better loaded compound is in the session.
+      const isComp = (p) => MG.SLOTS[p.slot].kind === 'compound';
+      const strong = (p) => isComp(p) && !p.ex.noMain && !p.ex.bwLoad;
+      const firstComp = picks.findIndex(isComp);
+      if (firstComp >= 0 && !strong(picks[firstComp])) {
+        const better = picks.findIndex(strong);
+        if (better > firstComp) picks.unshift(picks.splice(better, 1)[0]);
+      }
+      // Order: compounds, then isolation, then ab work, then the finisher.
+      const rank = (p) => ({ compound: 0, iso: 1, core: 2, cardio: 3 }[MG.SLOTS[p.slot].kind]);
+      picks.sort((x, y) => rank(x) - rank(y));
+      let firstDone = false;
+      const exercises = picks.map((p) => {
+        const isFirst = !firstDone && isComp(p);
+        if (isFirst) firstDone = true;
+        return makeItem(p.ex, p.slot, style, lvl, isFirst);
+      });
+      return { tplName: d.tpl.name, weekday: DAY_MAP[days][i], where: d.where, eq: d.eqList, exercises, minutes: dayMinutes(exercises) };
+    });
+  }
+
+  /* Name sessions, adding A / B when a day type appears more than once in the week. */
+  function nameDays(daysOut) {
+    const total = {}, seen = {};
+    daysOut.forEach((d) => (total[d.tplName] = (total[d.tplName] || 0) + 1));
+    daysOut.forEach((d) => {
+      seen[d.tplName] = (seen[d.tplName] || 0) + 1;
+      const suffix = total[d.tplName] > 1 ? ' ' + 'ABCD'[seen[d.tplName] - 1] : '';
+      d.name = d.tplName.replace(' ·', suffix + ' ·') + (d.tplName.includes(' ·') ? '' : suffix);
+      delete d.tplName;
+    });
+    return daysOut;
+  }
+
+  /* ---------- phase B: same sessions, different exercises ---------- */
+  function buildPhaseB(a, daysA) {
+    const phys = P.physique(a);
+    const lvl = LEVEL[a.experience] || 0;
+    const avoid = new Set(daysA.flatMap((d) => d.exercises.map((e) => e.id)));
+    const usage = {};
+    return daysA.map((dA) => {
+      const eq = new Set(dA.eq);
+      const used = new Set();
+      // Fill the most constrained slots first, so an exercise that is the only option for one slot is not
+      // taken by another slot that had alternatives (for example Chin-Up as both a lat and a biceps exercise).
+      // Loaded exercises choose before bodyweight ones, so a bodyweight slot cannot take the only loaded option.
+      const order = dA.exercises.map((e, k) => k).sort((x, y) => (dA.exercises[y].first - dA.exercises[x].first)
+        || (dA.exercises[x].bwLoad - dA.exercises[y].bwLoad)
+        || candidates(dA.exercises[x].slot, eq, lvl).length - candidates(dA.exercises[y].slot, eq, lvl).length);
+      const out = new Array(dA.exercises.length);
+      order.forEach((k) => { const itemA = dA.exercises[k]; out[k] = (() => {
+        let ex = null;
+        if (itemA.first) ex = (MG.EX[itemA.slot] || []).find((e) => e.id === itemA.id); // keep the main lift
+        if (!ex) {
+          let bestScore = Infinity;
+          const list = candidates(itemA.slot, eq, lvl);
+          const nA = Math.max(0, list.findIndex((c) => c.id === itemA.id));
+          // For the muscles the goal is built around, do not trade the best lift for a clearly weaker one.
+          const priority = (phys.emph || {})[MAIN_MUSCLE(itemA.slot)] >= 1.4;
+          list.forEach((c, n) => {
+            if (used.has(c.id)) return;
+            const weaker = priority && n - nA >= 2 ? 1500 : 0;
+            const repeats = (usage[c.id] || 0) >= 2 ? 3000 : (usage[c.id] || 0) * 100; // at most twice a week
+            const downgrade = !itemA.bwLoad && c.bwLoad; // never swap a loaded exercise for an unloaded one
+            const sc = repeats + n + weaker + (c.id === itemA.id ? 2000 : avoid.has(c.id) ? 1000 : 0) + (downgrade ? 5000 : 0) + (c.easy && lvl > 0 ? 500 : 0);
+            if (sc < bestScore) { ex = c; bestScore = sc; }
+          });
+        }
+        if (!ex) ex = (MG.EX[itemA.slot] || []).find((e) => e.id === itemA.id);
+        if (used.has(ex.id)) ex = candidates(itemA.slot, eq, lvl).find((c) => !used.has(c.id) && (itemA.bwLoad || !c.bwLoad)) || ex;
+        used.add(ex.id);
+        usage[ex.id] = (usage[ex.id] || 0) + 1;
+        return makeItem(ex, itemA.slot, phys.style, lvl, itemA.first);
+      })(); });
+      const exercises = out;
+      return { name: dA.name, weekday: dA.weekday, where: dA.where, eq: dA.eq, exercises, minutes: dayMinutes(exercises) };
+    });
+  }
+
+  /* Make sure enough sessions a week contain ab work. Short sessions get it in place of the isolation exercise
+     the goal values least, so the session does not get longer. */
+  function ensureAbs(daysOut, a, count) {
+    const phys = P.physique(a);
+    const lvl = LEVEL[a.experience] || 0;
+    const emph = phys.emph || {};
+    const need = Math.min(daysOut.length, phys.abs || 2);
+    const has = (d) => d.exercises.some((e) => e.slot === 'core');
+    const usage = {};
+    daysOut.forEach((d) => d.exercises.forEach((e) => (usage[e.id] = (usage[e.id] || 0) + 1)));
+    while (daysOut.filter(has).length < need) {
+      // The session furthest (in days of the week) from one that already has ab work, so it is spread out.
+      const withCore = daysOut.filter(has).map((d) => d.weekday);
+      const gap = (d) => (withCore.length ? Math.min(...withCore.map((w) => Math.min(Math.abs(w - d.weekday), 7 - Math.abs(w - d.weekday)))) : 7);
+      const target = daysOut.filter((d) => !has(d)).sort((x, y) => gap(y) - gap(x) || x.weekday - y.weekday)[0];
+      if (!target) break;
+      const taken = new Set(target.exercises.map((e) => e.id));
+      const c = candidates('core', new Set(target.eq), lvl).filter((ex) => !taken.has(ex.id));
+      if (!c.length) break;
+      const ex = c.slice().sort((x, y) => (usage[x.id] || 0) - (usage[y.id] || 0))[0];
+      usage[ex.id] = (usage[ex.id] || 0) + 1;
+      const list = target.exercises;
+      if (list.length >= count) {
+        const isos = list.map((e, k) => ({ e, k })).filter((x) => x.e.kind === 'iso');
+        if (isos.length) {
+          const drop = isos.sort((x, y) => (emph[MAIN_MUSCLE(x.e.slot)] || 0) - (emph[MAIN_MUSCLE(y.e.slot)] || 0) || y.k - x.k)[0].k;
+          list.splice(drop, 1);
+        }
+      }
+      const item = makeItem(ex, 'core', phys.style, lvl, false);
+      const cardioAt = list.findIndex((e) => e.slot === 'cardio');
+      if (cardioAt >= 0) list.splice(cardioAt, 0, item); else list.push(item);
+      target.minutes = dayMinutes(list);
+    }
+  }
+
+  P.workout = function (a) {
+    const phys = P.physique(a);
+    const days = clamp(a.days, 2, 6);
+    const split = splitFor(a, phys);
+    const daysA = nameDays(buildPhaseA(a));
+    ensureAbs(daysA, a, COUNT_FOR_MIN[a.minutes] || 6);
+    const daysB = buildPhaseB(a, daysA);
     const splitName = split.every((k) => k.startsWith('full')) ? 'Full Body ×' + days
       : phys.focus === 'glutes' ? 'Lower-body focus split' : SPLIT_NAMES[days];
-    return { splitName, style: phys.style, days: out };
+    return { splitName, style: phys.style, days: daysA, daysB };
   };
 
+  /* Plans saved before blocks existed have one phase and may lack ab work: add both, keeping the user's swaps. */
+  P.ensureBlock = function (workout, a) {
+    if (!workout) return workout;
+    ensureAbs(workout.days, a, COUNT_FOR_MIN[a.minutes] || 6);
+    if (!workout.daysB) workout.daysB = buildPhaseB(a, workout.days);
+    return workout;
+  };
+
+  /* Which week of the 4-week block a date falls in, counting from the Monday the plan started. */
+  const dayNum = (k) => { const p = k.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]) / 86400000; };
+  P.blockWeek = function (startKey, todayKey) {
+    // A date before the start (phone clock changed) counts as week 1.
+    const weeks = startKey && todayKey ? Math.max(0, Math.floor((dayNum(todayKey) - dayNum(startKey)) / 7)) : 0;
+    const week = (weeks % BLOCK_WEEKS) + 1;
+    return { week, phase: week <= 2 ? 0 : 1, block: Math.floor(weeks / BLOCK_WEEKS) + 1 };
+  };
+  P.phaseDays = (workout, phase) => (phase === 1 && workout.daysB ? workout.daysB : workout.days);
+  P.PHASE_WEEKS = ['Weeks 1–2', 'Weeks 3–4'];
+
   /* Replace one exercise with the next alternative that fits the same slot and equipment. */
-  P.swapExercise = function (workout, a, dayIdx, exIdx) {
-    const day = workout.days[dayIdx];
+  P.swapExercise = function (workout, a, dayIdx, exIdx, phase) {
+    const day = P.phaseDays(workout, phase || 0)[dayIdx];
     const cur = day.exercises[exIdx];
     const lvl = LEVEL[a.experience] || 0;
     const c = candidates(cur.slot, new Set(day.eq), lvl);

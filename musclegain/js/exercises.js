@@ -25,27 +25,40 @@
 
   /* style  -> how sets/reps/rest are written
      goal   -> how calories are set (see planner.js)
-     boost  -> slots that survive when a short session has to drop exercises */
+     emph   -> share of weekly training volume each muscle should get. The planner builds every session to hit these
+               proportions, so this is what makes one goal's program look different from another's.
+               Muscles: chest, back, front (front delts), side (side delts), rear (rear delts), bi, tri, quad, ham, glute, calf, abs.
+     abs    -> minimum sessions a week with ab work (default 2) */
+  const EMPH = (o) => Object.assign({ chest: 1, back: 1.2, front: 0.3, side: 0.8, rear: 0.5, bi: 0.6, tri: 0.6, quad: 1, ham: 0.7, glute: 0.7, calf: 0.4, abs: 0.5 }, o);
+
   MG.PHYSIQUES = {
     male: [
       { id: 'm_lean', name: 'Lean & Defined', img: 'img/physiques/m_lean.jpg', photo: 'photo-1541521493945-d00ed7dd0d8d',
-        blurb: 'Slim waist, visible abs, light athletic muscle.', style: 'lean', goal: 'lean', boost: ['core'] },
+        blurb: 'Slim waist, visible abs, light athletic muscle.', style: 'lean', goal: 'lean', abs: 3,
+        emph: EMPH({ side: 1, rear: 0.6, quad: 0.8, glute: 0.6, abs: 0.9 }) },
       { id: 'm_athletic', name: 'Athletic', img: 'img/physiques/m_athletic.jpg', photo: 'photo-1562038969-e85c13ecb2ac',
-        blurb: 'Balanced muscle everywhere. Strong, fit and mobile.', style: 'athletic', goal: 'athletic', boost: [] },
+        blurb: 'Balanced muscle everywhere. Strong, fit and mobile.', style: 'athletic', goal: 'athletic',
+        emph: EMPH({ quad: 1.1, ham: 0.8, glute: 0.8, abs: 0.6 }) },
       { id: 'm_muscular', name: 'Muscular & Shredded', img: 'img/physiques/m_muscular.jpg', photo: 'photo-1610312856669-2cee66b2949c',
-        blurb: 'Wide shoulders, full chest and arms, low body fat.', style: 'hyp', goal: 'muscular', boost: ['lateral', 'biceps', 'triceps'] },
+        blurb: 'Wide shoulders, full chest and arms, low body fat.', style: 'hyp', goal: 'muscular', abs: 3,
+        emph: EMPH({ chest: 1.5, back: 1.3, side: 1.4, rear: 0.8, bi: 1, tri: 1, quad: 0.8, ham: 0.6, glute: 0.5, abs: 0.7 }) },
       { id: 'm_mass', name: 'Big & Powerful', img: 'img/physiques/m_mass.jpg', photo: 'photo-1626724419913-ac60f768c20f',
-        blurb: 'Maximum size and strength. Mass first, abs later.', style: 'mass', goal: 'mass', boost: [] },
+        blurb: 'Maximum size and strength. Mass first, abs later.', style: 'mass', goal: 'mass',
+        emph: EMPH({ chest: 1.2, back: 1.4, front: 0.4, side: 0.9, bi: 0.7, tri: 0.8, quad: 1.3, ham: 0.9, glute: 0.8, abs: 0.3 }) },
     ],
     female: [
       { id: 'f_toned', name: 'Toned & Slim', img: 'img/physiques/f_toned.jpg', photo: 'photo-1708011108850-49646bd34503',
-        blurb: 'Lean all over with light muscle definition.', style: 'lean', goal: 'lean', boost: ['core'] },
+        blurb: 'Lean all over with light muscle definition.', style: 'lean', goal: 'lean', abs: 3,
+        emph: EMPH({ chest: 0.6, back: 1, side: 0.7, bi: 0.4, tri: 0.5, quad: 1, ham: 0.8, glute: 1.1, abs: 0.8 }) },
       { id: 'f_defined', name: 'Lean & Defined', img: 'img/physiques/f_defined.jpg', photo: 'photo-1606902965551-dce093cda6e7',
-        blurb: 'Visible abs, shaped shoulders and legs.', style: 'hyp', goal: 'athletic', boost: ['core', 'lateral'] },
+        blurb: 'Visible abs, shaped shoulders and legs.', style: 'hyp', goal: 'athletic', abs: 3,
+        emph: EMPH({ chest: 0.6, back: 1, side: 1.1, rear: 0.6, bi: 0.5, tri: 0.6, quad: 1, ham: 0.8, glute: 1, abs: 0.9 }) },
       { id: 'f_strong', name: 'Athletic & Strong', img: 'img/physiques/f_strong.jpg', photo: 'photo-1708011108776-45ad9e625269',
-        blurb: 'Noticeable muscle and real strength on the big lifts.', style: 'athletic', goal: 'muscular', boost: [] },
+        blurb: 'Noticeable muscle and real strength on the big lifts.', style: 'athletic', goal: 'muscular',
+        emph: EMPH({ chest: 0.9, quad: 1.1, ham: 0.9, glute: 1, abs: 0.6 }) },
       { id: 'f_curvy', name: 'Curvy & Strong', img: 'img/physiques/f_curvy.jpg', photo: 'photo-1768929035644-6e146b35acd8',
-        blurb: 'Glutes and legs first, with a tight waist and toned upper body.', style: 'hyp', goal: 'muscular', focus: 'glutes', boost: ['glute', 'hinge', 'single_leg'] },
+        blurb: 'Glutes and legs first, with a tight waist and toned upper body.', style: 'hyp', goal: 'muscular', focus: 'glutes',
+        emph: EMPH({ chest: 0.4, back: 0.8, front: 0.2, side: 0.6, rear: 0.4, bi: 0.3, tri: 0.4, quad: 0.9, ham: 1, glute: 2, calf: 0.3, abs: 0.6 }) },
     ],
   };
 
@@ -75,7 +88,9 @@
 
   /* [photo id, display name, equipment, coaching cue, options]
      equipment: '+' = all needed, '|' = either works, 'bw' = bodyweight only.
-     options: lvl = minimum experience (0 beginner, 1 intermediate, 2 advanced), time = held/timed, bwLoad = unweighted */
+     options: lvl = minimum experience (0 beginner, 1 intermediate, 2 advanced), time = held/timed, bwLoad = unweighted,
+     easy = a regression, only picked for non-beginners when nothing else fits,
+     noMain = fine as an accessory but never the main lift of a day, heavy = needs long rests even when not done first */
   const E = (id, name, req, cue, o) => Object.assign({ id, name, req, cue }, o || {});
 
   MG.EX = {
@@ -134,10 +149,10 @@
     vertical_pull: [
       E('Pullups', 'Pull-Up', 'bar', 'Start from a dead hang, drive elbows to your pockets, chin over the bar.', { lvl: 1, bwLoad: true }),
       E('Wide-Grip_Lat_Pulldown', 'Lat Pulldown', 'cable', 'Lean back slightly and pull the bar to your upper chest.'),
-      E('Band_Assisted_Pull-Up', 'Band-Assisted Pull-Up', 'bar+bands', 'Loop the band over the bar and under a knee. Use a lighter band as you get stronger.', { bwLoad: true }),
+      E('Band_Assisted_Pull-Up', 'Band-Assisted Pull-Up', 'bar+bands', 'Loop the band over the bar and under a knee. Use a lighter band as you get stronger.', { bwLoad: true, easy: true }),
       E('Chin-Up', 'Chin-Up', 'bar', 'Palms facing you. If you cannot get 5 reps, jump up and lower yourself for 5 slow seconds.', { bwLoad: true }),
       E('Close-Grip_Front_Lat_Pulldown', 'Close-Grip Pulldown', 'cable', 'Elbows travel down in front of you. Full stretch at the top.'),
-      E('Straight-Arm_Dumbbell_Pullover', 'Dumbbell Pullover', 'db+bench', 'Arms almost straight, lower behind your head until the lats stretch.'),
+      E('Straight-Arm_Dumbbell_Pullover', 'Dumbbell Pullover', 'db+bench', 'Arms almost straight, lower behind your head until the lats stretch.', { noMain: true }),
     ],
     traps: [
       E('Barbell_Shrug', 'Barbell Shrug', 'bb', 'Shrug straight up toward your ears and hold for a second. Do not roll.'),
@@ -145,26 +160,26 @@
       E('Cable_Shrugs', 'Cable Shrug', 'cable', 'Stand close to the low pulley and shrug straight up.'),
     ],
     squat: [
-      E('Barbell_Squat', 'Barbell Back Squat', 'bb+rack', 'Brace hard, sit between your hips, thighs at least parallel, drive up through mid-foot.'),
+      E('Barbell_Squat', 'Barbell Back Squat', 'bb+rack', 'Brace hard, sit between your hips, thighs at least parallel, drive up through mid-foot.', { heavy: true }),
       E('Leg_Press', 'Leg Press', 'mach', 'Lower until knees are near 90° without your hips rolling off the pad. Never lock out hard.'),
-      E('Front_Barbell_Squat', 'Front Squat', 'bb+rack', 'Elbows high, torso upright. Great for quads.', { lvl: 1 }),
+      E('Front_Barbell_Squat', 'Front Squat', 'bb+rack', 'Elbows high, torso upright. Great for quads.', { lvl: 1, heavy: true }),
       E('Hack_Squat', 'Hack Squat', 'mach', 'Feet low on the platform for more quads. Go deep and controlled.'),
       E('Goblet_Squat', 'Goblet Squat', 'kb|db', 'Hold the weight at your chest, elbows inside the knees at the bottom.'),
       E('Dumbbell_Squat', 'Dumbbell Squat', 'db', 'Dumbbells at your sides, chest proud, sit down and back.'),
       E('Bodyweight_Squat', 'Bodyweight Squat', 'bw', 'Three seconds down, pause, stand up fast. Add a backpack when 20 reps is easy.', { bwLoad: true }),
-      E('Freehand_Jump_Squat', 'Jump Squat', 'bw', 'Squat to parallel and jump. Land soft and go straight into the next rep.', { bwLoad: true }),
+      E('Freehand_Jump_Squat', 'Jump Squat', 'bw', 'Squat to parallel and jump. Land soft and go straight into the next rep.', { bwLoad: true, noMain: true }),
     ],
     hinge: [
-      E('Barbell_Deadlift', 'Deadlift', 'bb', 'Bar over mid-foot, flat back, push the floor away and stand tall. Reset every rep.'),
+      E('Barbell_Deadlift', 'Deadlift', 'bb', 'Bar over mid-foot, flat back, push the floor away and stand tall. Reset every rep.', { heavy: true }),
       E('Romanian_Deadlift', 'Romanian Deadlift', 'bb', 'Soft knees, push hips back until the hamstrings stretch, bar stays close to your legs.'),
       E('Stiff-Legged_Dumbbell_Deadlift', 'Dumbbell Romanian Deadlift', 'db', 'Slide the dumbbells down your thighs, hips back, flat back.'),
       E('One-Arm_Kettlebell_Swings', 'Kettlebell Swing', 'kb', 'It is a hip snap, not a squat. The bell floats to chest height.'),
-      E('Hyperextensions_Back_Extensions', 'Back Extension', 'mach', 'Pad just below the hips. Rise until your body is straight, not higher.'),
-      E('Pull_Through', 'Cable Pull-Through', 'cable', 'Face away from the pulley, hinge back, then drive hips forward and squeeze.'),
-      E('Band_Good_Morning', 'Band Good Morning', 'bands', 'Stand on the band, loop it over your neck, hinge with a flat back.'),
+      E('Hyperextensions_Back_Extensions', 'Back Extension', 'mach', 'Pad just below the hips. Rise until your body is straight, not higher.', { noMain: true }),
+      E('Pull_Through', 'Cable Pull-Through', 'cable', 'Face away from the pulley, hinge back, then drive hips forward and squeeze.', { noMain: true }),
+      E('Band_Good_Morning', 'Band Good Morning', 'bands', 'Stand on the band, loop it over your neck, hinge with a flat back.', { noMain: true }),
       E('Kettlebell_One-Legged_Deadlift', 'Single-Leg Kettlebell Deadlift', 'kb', 'Hips stay square to the floor. Reach the free leg straight back.', { lvl: 1 }),
-      E('Single_Leg_Glute_Bridge', 'Single-Leg Glute Bridge', 'bw', 'One foot planted, drive through the heel until hips are fully extended.', { bwLoad: true }),
-      E('Butt_Lift_Bridge', 'Glute Bridge', 'bw', 'Ribs down, push through your heels and hold the top for two seconds.', { bwLoad: true }),
+      E('Single_Leg_Glute_Bridge', 'Single-Leg Glute Bridge', 'bw', 'One foot planted, drive through the heel until hips are fully extended.', { bwLoad: true, noMain: true }),
+      E('Butt_Lift_Bridge', 'Glute Bridge', 'bw', 'Ribs down, push through your heels and hold the top for two seconds.', { bwLoad: true, noMain: true }),
     ],
     single_leg: [
       E('Split_Squat_with_Dumbbells', 'Bulgarian Split Squat', 'db+bench', 'Rear foot on the bench, drop straight down, front knee tracks over the toes.'),
@@ -173,8 +188,8 @@
       E('Dumbbell_Step_Ups', 'Dumbbell Step-Up', 'db', 'Use a bench or stairs. Push through the top foot only, do not bounce off the floor.'),
       E('Dumbbell_Rear_Lunge', 'Reverse Lunge', 'db', 'Step back instead of forward. Easier on the knees.'),
       E('Bodyweight_Walking_Lunge', 'Walking Lunge', 'bw', 'Continuous steps, torso upright. Count reps per leg.', { bwLoad: true }),
-      E('Step-up_with_Knee_Raise', 'Step-Up with Knee Raise', 'bw', 'Use stairs or a sturdy chair. Drive the free knee up at the top.', { bwLoad: true }),
-      E('Split_Jump', 'Split Jump', 'bw', 'Lunge, jump, switch legs in the air. Land softly.', { lvl: 1, bwLoad: true }),
+      E('Step-up_with_Knee_Raise', 'Step-Up with Knee Raise', 'bw', 'Use stairs or a sturdy chair. Drive the free knee up at the top.', { bwLoad: true, noMain: true }),
+      E('Split_Jump', 'Split Jump', 'bw', 'Lunge, jump, switch legs in the air. Land softly.', { lvl: 1, bwLoad: true, noMain: true }),
     ],
     quad_iso: [
       E('Leg_Extensions', 'Leg Extension', 'mach', 'Squeeze hard at the top for a second and lower over three seconds.'),
@@ -190,9 +205,9 @@
       E('One-Legged_Cable_Kickback', 'Cable Kickback', 'cable', 'Strap on the ankle, kick straight back without arching your lower back.'),
       E('Thigh_Abductor', 'Hip Abduction Machine', 'mach', 'Lean forward a little and push the knees out. Pause when open.'),
       E('Hip_Lift_with_Band', 'Banded Hip Lift', 'bands', 'Band across the hips, anchored under your hands or feet. Squeeze at the top.'),
-      E('Single_Leg_Glute_Bridge', 'Single-Leg Glute Bridge', 'bw', 'One foot planted, drive through the heel until hips are fully extended.', { bwLoad: true }),
-      E('Glute_Kickback', 'Glute Kickback', 'bw', 'On all fours, press one heel toward the ceiling. Hold the top.', { bwLoad: true }),
-      E('Butt_Lift_Bridge', 'Glute Bridge', 'bw', 'Ribs down, push through your heels and hold the top for two seconds.', { bwLoad: true }),
+      E('Single_Leg_Glute_Bridge', 'Single-Leg Glute Bridge', 'bw', 'One foot planted, drive through the heel until hips are fully extended.', { bwLoad: true, noMain: true }),
+      E('Glute_Kickback', 'Glute Kickback', 'bw', 'On all fours, press one heel toward the ceiling. Hold the top.', { bwLoad: true, noMain: true }),
+      E('Butt_Lift_Bridge', 'Glute Bridge', 'bw', 'Ribs down, push through your heels and hold the top for two seconds.', { bwLoad: true, noMain: true }),
     ],
     calves: [
       E('Standing_Calf_Raises', 'Standing Calf Raise', 'mach', 'Full stretch at the bottom, pause, then all the way up onto the big toe.'),

@@ -252,6 +252,13 @@ img { display: block; max-width: 100%; }
 .shop label span { color: var(--muted); margin-left: auto; white-space: nowrap; font-variant-numeric: tabular-nums; padding-left: 10px; }
 .shop input:checked ~ * { opacity: 0.4; text-decoration: line-through; }
 
+/* ---------- 4-week block bar ---------- */
+.blockbar { display: flex; align-items: center; justify-content: space-between; gap: 14px 20px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 18px; }
+.blockbar > div:first-child { flex: 1 1 320px; }
+.blockbar b { font: 800 1.35rem/1 var(--display); text-transform: uppercase; color: var(--accent); }
+.blockbar small { display: block; color: var(--muted); font-size: 0.86rem; margin-top: 6px; line-height: 1.45; }
+.blockbar .seg button { padding: 8px 14px; }
+
 /* ---------- workout logging ---------- */
 .error { color: var(--warn); font-size: 0.88rem; margin-top: 8px; }
 a.btn { text-decoration: none; }
@@ -362,7 +369,7 @@ a.btn { text-decoration: none; }
 @media print {
   :root { --bg: #fff; --surface: #fff; --surface-2: #f1f3f5; --line: #d0d5dd; --text: #111; --muted: #555; --accent: #111; --accent-soft: #f1f3f5; --accent-ink: #fff; }
   body { font-size: 11pt; }
-  .top, .tabs, .foot .credits, .btn, .daypills, .playbtn, .logrows, .weigh, .databtns, .eatbar { display: none !important; }
+  .top, .tabs, .foot .credits, .btn, .daypills, .playbtn, .blockbar .seg, .logrows, .weigh, .databtns, .eatbar { display: none !important; }
   .panel, .mealday { display: block !important; }
   .panel-title { display: block; margin: 26px 0 12px; padding-top: 14px; border-top: 2px solid #111; }
   .mealday > h3 { display: block; margin: 18px 0 10px; }

@@ -20,7 +20,7 @@
     diet: 'omnivore', restrictions: [], meals: 4, cook: 'normal', kcalAdjust: 0, adjustedOn: null,
   });
 
-  let state = { step: 0, units: 'metric', a: defaults(), plan: null, tab: 'overview', mealDay: T.weekdayIdx(), logDay: null, errors: {} };
+  let state = { step: 0, units: 'metric', a: defaults(), plan: null, tab: 'overview', mealDay: T.weekdayIdx(), logDay: null, viewPhase: null, errors: {} };
 
   function load() {
     try {
@@ -30,8 +30,8 @@
   }
   function save() {
     try {
-      const { step, units, a, plan, tab, mealDay, logDay } = state;
-      localStorage.setItem(KEY, JSON.stringify({ step, units, a, plan, tab, mealDay, logDay }));
+      const { step, units, a, plan, tab, mealDay, logDay, viewPhase } = state;
+      localStorage.setItem(KEY, JSON.stringify({ step, units, a, plan, tab, mealDay, logDay, viewPhase }));
     } catch (e) { /* storage blocked: the site still works, it just forgets on reload */ }
   }
 
@@ -54,6 +54,10 @@
   const toDisp = (kg) => (isImp() ? Math.round(kg * 2.20462 * 2) / 2 : Math.round(kg * 10) / 10);
   const fromDisp = (v) => (isImp() ? v / 2.20462 : v);
   const today = () => T.dateKey();
+  /* 4-week blocks: weeks 1-2 use phase A, weeks 3-4 phase B. viewPhase null means follow the calendar. */
+  const blockNow = () => P.blockWeek(state.plan && state.plan.workout.start, today());
+  const viewPhase = () => (state.viewPhase == null ? blockNow().phase : state.viewPhase);
+  const phaseDays = (ph) => P.phaseDays(state.plan.workout, ph == null ? viewPhase() : ph);
   const fmtDate = (k) => T.parse(k).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
   const fmtSet = (s, timed) => (s.w > 0 ? toDisp(s.w) + ' ' + wUnit() + ' × ' + s.r : s.r + (timed ? ' s' : ' reps'));
 
@@ -299,7 +303,7 @@
           </ul>
         </div>
       </div>
-      <div class="section-h"><h3>Your week</h3><p>${esc(w.splitName)} · ${w.days.length} sessions</p></div>
+      <div class="section-h"><h3>Your week</h3><p>${esc(w.splitName)} · ${w.days.length} sessions · week ${blockNow().week} of a 4-week block</p></div>
       <div class="week">
         ${SHORT_DAYS.map((d, i) => byDay[i]
           ? `<div class="wd train"><div class="d">${d}</div><b>${esc(byDay[i].name.split(' ·')[0])}</b><small>${whereLabel(byDay[i])} · ${byDay[i].minutes} min</small></div>`
@@ -329,7 +333,7 @@
   }
 
   function dayHTML(i) {
-    const d = state.plan.workout.days[i];
+    const d = phaseDays()[i];
     const tk = today();
     const logging = state.logDay === i;
     const doneToday = T.data.sessions[tk] && T.data.sessions[tk].day === i;
@@ -380,14 +384,20 @@
   function trainingHTML() {
     const w = state.plan.workout;
     const styleCopy = {
-      lean: 'Higher reps and short rests, with a conditioning finisher, to burn more while holding on to muscle.',
+      lean: 'Real weights in moderate rep ranges to keep your muscle while the diet takes the fat off, with a short conditioning finisher.',
       athletic: 'Heavy compound lifts first, moderate-rep accessory work after, and core work in every session.',
-      hyp: 'Classic muscle-building rep ranges, with extra work for the areas your goal physique depends on.',
+      hyp: 'Classic muscle-building rep ranges. The week is built so the muscles your goal physique depends on get the most sets.',
       mass: 'Heavy compound lifts first, then volume. Long rests and big weights.',
     }[w.style];
+    const b = blockNow(), vp = viewPhase();
     return `
       <div class="section-h" style="margin-top:0"><h3>${esc(w.splitName)}</h3><p>${styleCopy} Tap Motion to see the movement, Swap to change an exercise, and Log this workout to record your sets.</p></div>
-      ${w.days.map((_, i) => dayHTML(i)).join('')}`;
+      <div class="blockbar">
+        <div><b>Week ${b.week} of 4</b>${b.block > 1 ? ' · block ' + b.block : ''}<small>Weeks 1–2 and weeks 3–4 use different exercises for the same muscles. Each day’s main lift stays the same so you can watch it go up. After week 4 the block starts again.</small></div>
+        <div class="seg" role="group" aria-label="Which weeks to show">${P.PHASE_WEEKS.map((label, ph) => `<button type="button" class="${vp === ph ? 'on' : ''}" data-action="phase" data-val="${ph}" aria-pressed="${vp === ph}">${label}${ph === b.phase ? ' · now' : ''}</button>`).join('')}</div>
+      </div>
+      ${vp !== b.phase ? `<div class="note" style="margin-bottom:18px">You are looking ahead at ${P.PHASE_WEEKS[vp].toLowerCase()}. You are in week ${b.week} now.</div>` : ''}
+      ${phaseDays().map((_, i) => dayHTML(i)).join('')}`;
   }
 
   /* ---------- diet ---------- */
@@ -565,8 +575,9 @@
     const latest = series[series.length - 1], first = series[0];
     const change = series.length > 1 ? latest.kg - first.kg : null;
     const eaten = T.eaten(tk);
-    const todayIdx = w.days.findIndex((d) => d.weekday === T.weekdayIdx(now));
-    const todayDay = w.days[todayIdx];
+    const nowDays = P.phaseDays(w, blockNow().phase);
+    const todayIdx = nowDays.findIndex((d) => d.weekday === T.weekdayIdx(now));
+    const todayDay = nowDays[todayIdx];
     const doneToday = !!T.data.sessions[tk] || T.trainedDates().has(tk);
     const mealsToday = state.plan.meals.days[T.weekdayIdx(now)].meals.length;
     const todayW = T.data.weights[tk];
@@ -663,6 +674,8 @@
     try {
       state.a.kcalAdjust = 0; state.a.adjustedOn = null;
       state.plan = P.generate(answers(), Math.floor(Math.random() * 1e9) + 1);
+      state.plan.workout.start = T.dateKey(T.weekStart());
+      state.viewPhase = null;
       state.step = 4; state.tab = 'overview'; state.logDay = null; state.errors = {};
       T.clearMeal(today());
     } catch (e) {
@@ -773,8 +786,15 @@
         t.textContent = on ? '❚❚ Stop' : '▶ Motion';
         break;
       }
+      case 'phase': {
+        const ph = +d.val;
+        state.viewPhase = ph === blockNow().phase ? null : ph;
+        state.logDay = null; save();
+        refreshPanel('training');
+        break;
+      }
       case 'swap-ex':
-        if (P.swapExercise(state.plan.workout, answers(), +d.day, +d.idx)) { save(); replaceDay(+d.day); }
+        if (P.swapExercise(state.plan.workout, answers(), +d.day, +d.idx, viewPhase())) { save(); replaceDay(+d.day); }
         else t.textContent = 'No alternative';
         break;
       case 'log-day': {
@@ -786,12 +806,12 @@
       }
       case 'finish-day': {
         const i = +d.day;
-        T.finish(today(), { day: i, name: state.plan.workout.days[i].name });
+        T.finish(today(), { day: i, name: phaseDays()[i].name });
         state.logDay = null; save(); replaceDay(i);
         break;
       }
       case 'go-train': {
-        state.logDay = +d.day; save();
+        state.logDay = +d.day; state.viewPhase = null; save();
         refreshPanel('training'); showTab('training');
         const el = document.getElementById('day-' + d.day);
         if (el) el.scrollIntoView();
@@ -866,5 +886,13 @@
 
   T.load();
   load();
+  // Plans saved before 4-week blocks existed: add weeks 3-4 and ab work, keep the user's swaps, start the block this week.
+  if (state.plan && state.plan.workout && (!state.plan.workout.daysB || !state.plan.workout.start)) {
+    try {
+      P.ensureBlock(state.plan.workout, answers());
+      if (!state.plan.workout.start) state.plan.workout.start = T.dateKey(T.weekStart());
+      save();
+    } catch (e) { console.error(e); }
+  }
   render();
 })();
