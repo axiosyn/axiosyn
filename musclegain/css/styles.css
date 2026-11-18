@@ -44,6 +44,7 @@ img { display: block; max-width: 100%; }
 .brand span { color: var(--accent); }
 .top-actions { display: flex; gap: 8px; justify-content: flex-end; }
 .foot { max-width: 880px; margin: 0 auto; padding: 40px 20px 60px; color: var(--muted); font-size: 0.82rem; text-align: center; }
+.foot p + p { margin-top: 10px; }
 .foot .credits { margin-top: 8px; opacity: 0.7; }
 
 /* ---------- buttons ---------- */
