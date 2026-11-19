@@ -102,7 +102,8 @@ a.card:hover{border-color:rgba(125,255,177,.5);transform:translateY(-2px)}
 .facts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px;color:var(--m);font-size:15px;line-height:1.45}
 .facts li::before{content:"› ";color:var(--g);font-family:"JetBrains Mono",monospace}
 .facts b{color:var(--t);font-weight:500}
-.tool .soon{margin-left:auto;flex:none;font-family:"JetBrains Mono",monospace;font-size:13px;border:1px solid var(--line);color:var(--m);padding:12px 18px;border-radius:10px}
+.tool .soon{margin-left:auto;flex:none;font-family:"JetBrains Mono",monospace;font-size:13px;border:1px solid var(--g);color:var(--g);padding:12px 18px;border-radius:10px}
+a.tool:hover .soon{background:var(--g);color:var(--bg)}
 
 .contact{margin:80px 0 0;padding:50px;border:1px solid var(--g);border-radius:18px;display:flex;align-items:center;gap:30px;scroll-margin-top:20px}
 .contact h2{all:unset;display:block;font-size:36px;font-weight:700}
@@ -191,20 +192,20 @@ footer{padding:40px 0 60px;color:var(--m);font-family:"JetBrains Mono",monospace
 </article>
 
 <h2 id="tools">&gt; FREE TOOLS</h2>
-<article class="card tool">
+<a class="card tool" href="/video-merger/">
   <div class="ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#7dffb1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.5"/><rect x="13.5" y="6" width="8" height="12" rx="1.5"/><path d="M10.5 12h3"/></svg></div>
   <div>
-    <span class="pill dim">COMING SOON</span>
+    <span class="pill">FREE · IN YOUR BROWSER</span>
     <h3>Video Merger</h3>
     <p>Join clips end to end at their original quality.</p>
     <ul class="facts">
       <li><b>Stays on your device.</b> Your videos are never uploaded; all the work happens in your own browser.</li>
-      <li><b>One-time download.</b> The first time you use it, your browser downloads the video engine it needs (about 30 MB).</li>
+      <li><b>One-time download.</b> The first time you use it, your browser downloads the video engine it needs (about 32 MB).</li>
       <li><b>Up to 2 GB.</b> All the clips in one merge can add up to 2 GB at most.</li>
     </ul>
   </div>
-  <span class="soon">coming soon</span>
-</article>
+  <span class="soon">open tool →</span>
+</a>
 
 <section class="contact" id="contact">
   <div><h2>Got a project? Let's build it.</h2><p>From research to a full product build, or a board that just needs fresh eyes.</p></div>
