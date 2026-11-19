@@ -462,6 +462,17 @@
     }
   }
 
+  /* Bump this whenever the way programs are built changes, so saved plans can be offered an update.
+     1 = first release, 2 = 4-week blocks and guaranteed ab work, 3 = per-physique muscle emphasis. */
+  P.WORKOUT_VERSION = 3;
+  P.isOutdated = (workout) => !!workout && (workout.version || 1) < P.WORKOUT_VERSION;
+  /* A fresh program from the same answers. The block keeps its start date so the week count carries on. */
+  P.upgradeWorkout = function (old, a) {
+    const w = P.workout(a);
+    if (old && old.start) w.start = old.start;
+    return w;
+  };
+
   P.workout = function (a) {
     const phys = P.physique(a);
     const days = clamp(a.days, 2, 6);
@@ -471,7 +482,7 @@
     const daysB = buildPhaseB(a, daysA);
     const splitName = split.every((k) => k.startsWith('full')) ? 'Full Body ×' + days
       : phys.focus === 'glutes' ? 'Lower-body focus split' : SPLIT_NAMES[days];
-    return { splitName, style: phys.style, days: daysA, daysB };
+    return { splitName, style: phys.style, days: daysA, daysB, version: P.WORKOUT_VERSION };
   };
 
   /* Plans saved before blocks existed have one phase and may lack ab work: add both, keeping the user's swaps. */

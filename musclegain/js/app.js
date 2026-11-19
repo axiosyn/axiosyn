@@ -20,7 +20,7 @@
     diet: 'omnivore', restrictions: [], meals: 4, cook: 'normal', kcalAdjust: 0, adjustedOn: null,
   });
 
-  let state = { step: 0, units: 'metric', a: defaults(), plan: null, tab: 'overview', mealDay: T.weekdayIdx(), logDay: null, viewPhase: null, errors: {} };
+  let state = { step: 0, units: 'metric', a: defaults(), plan: null, tab: 'overview', mealDay: T.weekdayIdx(), logDay: null, viewPhase: null, updateDismissed: 0, errors: {} };
 
   function load() {
     try {
@@ -30,8 +30,8 @@
   }
   function save() {
     try {
-      const { step, units, a, plan, tab, mealDay, logDay, viewPhase } = state;
-      localStorage.setItem(KEY, JSON.stringify({ step, units, a, plan, tab, mealDay, logDay, viewPhase }));
+      const { step, units, a, plan, tab, mealDay, logDay, viewPhase, updateDismissed } = state;
+      localStorage.setItem(KEY, JSON.stringify({ step, units, a, plan, tab, mealDay, logDay, viewPhase, updateDismissed }));
     } catch (e) { /* storage blocked: the site still works, it just forgets on reload */ }
   }
 
@@ -391,6 +391,7 @@
     }[w.style];
     const b = blockNow(), vp = viewPhase();
     return `
+      ${P.isOutdated(w) ? `<div class="upgrade-note"><div><b>A better version of your program is ready.</b> Each goal now trains the muscles it is built around, with ab work every week and new variations every two weeks. Your logged workouts, weigh-ins and meals are kept.</div><button type="button" class="btn btn-primary btn-sm" data-action="upgrade-plan">Update my plan</button></div>` : ''}
       <div class="section-h" style="margin-top:0"><h3>${esc(w.splitName)}</h3><p>${styleCopy} Tap Motion to see the movement, Swap to change an exercise, and Log this workout to record your sets.</p></div>
       <div class="blockbar">
         <div><b>Week ${b.week} of 4</b>${b.block > 1 ? ' · block ' + b.block : ''}<small>Weeks 1–2 and weeks 3–4 use different exercises for the same muscles. Each day’s main lift stays the same so you can watch it go up. After week 4 the block starts again.</small></div>
@@ -662,9 +663,64 @@
       <button type="button" class="btn btn-ghost btn-sm" data-action="reset">Start over</button>`;
   }
 
+  /* ---------- update prompt for plans built by an older version ---------- */
+  let promptOpen = false, lastFocus = null;
+  function showUpdatePrompt() {
+    if (promptOpen) return;
+    promptOpen = true;
+    lastFocus = document.activeElement;
+    const back = document.createElement('div');
+    back.className = 'modal-back';
+    back.id = 'update-prompt';
+    back.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="update-title">
+        <div class="eyebrow">MuscleGain update</div>
+        <h2 id="update-title">Your training plan just got better</h2>
+        <ul>
+          <li><b>Built for your goal.</b> Each physique now gets more sets for the muscles it is about, so Muscular &amp; Shredded trains far more chest, shoulders and arms.</li>
+          <li><b>Abs every week.</b> Ab work in at least two or three sessions.</li>
+          <li><b>Fresh every two weeks.</b> Weeks 3–4 swap in new variations, then the block repeats.</li>
+        </ul>
+        <p>Your logged workouts, weigh-ins and meals are kept, and your diet plan stays the same. Exercises you swapped by hand will be replaced.</p>
+        <div class="modal-btns">
+          <button type="button" class="btn btn-primary" data-action="upgrade-plan">Update my plan</button>
+          <button type="button" class="btn btn-ghost" data-action="dismiss-update">Not now</button>
+        </div>
+        <p class="modal-small">You can still update later from the Training tab.</p>
+      </div>`;
+    document.body.appendChild(back);
+    back.querySelector('[data-action=upgrade-plan]').focus();
+  }
+  function closeUpdatePrompt() {
+    const el = document.getElementById('update-prompt');
+    if (el) el.remove();
+    promptOpen = false;
+    if (lastFocus && lastFocus.isConnected) lastFocus.focus();
+  }
+  function toast(text) {
+    const el = Object.assign(document.createElement('div'), { className: 'toast', textContent: text });
+    el.setAttribute('role', 'status');
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+  document.addEventListener('keydown', (ev) => {
+    if (!promptOpen) return;
+    if (ev.key === 'Escape') { state.updateDismissed = P.WORKOUT_VERSION; save(); closeUpdatePrompt(); return; }
+    if (ev.key === 'Tab') { // keep keyboard focus inside the dialog
+      const btns = [...document.querySelectorAll('#update-prompt button')];
+      const i = btns.indexOf(document.activeElement);
+      ev.preventDefault();
+      btns[(i + (ev.shiftKey ? btns.length - 1 : 1)) % btns.length].focus();
+    }
+  });
+
   function render() {
     if (state.step >= 4 && state.plan) {
-      try { renderResults(); return; } catch (e) { console.error(e); state.plan = null; state.step = 0; }
+      try {
+        renderResults();
+        if (P.isOutdated(state.plan.workout) && state.updateDismissed !== P.WORKOUT_VERSION) showUpdatePrompt();
+        return;
+      } catch (e) { console.error(e); state.plan = null; state.step = 0; }
     }
     if (state.step > 3) state.step = 0;
     renderWizard();
@@ -786,6 +842,16 @@
         t.textContent = on ? '❚❚ Stop' : '▶ Motion';
         break;
       }
+      case 'upgrade-plan': {
+        state.plan.workout = P.upgradeWorkout(state.plan.workout, answers());
+        state.logDay = null; state.viewPhase = null; state.updateDismissed = P.WORKOUT_VERSION;
+        closeUpdatePrompt(); save(); render();
+        toast('Your plan is updated.');
+        break;
+      }
+      case 'dismiss-update':
+        state.updateDismissed = P.WORKOUT_VERSION; save(); closeUpdatePrompt();
+        break;
       case 'phase': {
         const ph = +d.val;
         state.viewPhase = ph === blockNow().phase ? null : ph;

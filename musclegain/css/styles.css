@@ -252,6 +252,22 @@ img { display: block; max-width: 100%; }
 .shop label span { color: var(--muted); margin-left: auto; white-space: nowrap; font-variant-numeric: tabular-nums; padding-left: 10px; }
 .shop input:checked ~ * { opacity: 0.4; text-decoration: line-through; }
 
+/* ---------- update prompt ---------- */
+.modal-back { position: fixed; inset: 0; z-index: 100; background: rgba(5, 6, 8, 0.72); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal { width: 100%; max-width: 520px; max-height: calc(100vh - 32px); overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+.modal .eyebrow { color: var(--accent); font-weight: 700; font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.modal h2 { font-size: clamp(1.6rem, 5vw, 2rem); }
+.modal ul { margin: 16px 0; padding-left: 18px; color: #cdd3de; }
+.modal li { margin-bottom: 9px; }
+.modal li b { color: var(--text); }
+.modal p { color: #cdd3de; font-size: 0.95rem; }
+.modal-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.modal .modal-small { margin-top: 12px; font-size: 0.82rem; color: var(--muted); }
+.upgrade-note { display: flex; align-items: center; justify-content: space-between; gap: 12px 18px; flex-wrap: wrap; background: var(--accent-soft); border: 1px solid rgba(212, 255, 58, 0.35); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 18px; font-size: 0.92rem; color: #cdd3de; }
+.upgrade-note > div { flex: 1 1 320px; }
+.upgrade-note b { color: var(--text); }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 110; background: var(--accent); color: var(--accent-ink); font-weight: 700; padding: 12px 20px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
 /* ---------- 4-week block bar ---------- */
 .blockbar { display: flex; align-items: center; justify-content: space-between; gap: 14px 20px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 18px; }
 .blockbar > div:first-child { flex: 1 1 320px; }
@@ -369,7 +385,7 @@ a.btn { text-decoration: none; }
 @media print {
   :root { --bg: #fff; --surface: #fff; --surface-2: #f1f3f5; --line: #d0d5dd; --text: #111; --muted: #555; --accent: #111; --accent-soft: #f1f3f5; --accent-ink: #fff; }
   body { font-size: 11pt; }
-  .top, .tabs, .foot .credits, .btn, .daypills, .playbtn, .blockbar .seg, .logrows, .weigh, .databtns, .eatbar { display: none !important; }
+  .top, .tabs, .foot .credits, .btn, .daypills, .playbtn, .blockbar .seg, .modal-back, .upgrade-note, .toast, .logrows, .weigh, .databtns, .eatbar { display: none !important; }
   .panel, .mealday { display: block !important; }
   .panel-title { display: block; margin: 26px 0 12px; padding-top: 14px; border-top: 2px solid #111; }
   .mealday > h3 { display: block; margin: 18px 0 10px; }
