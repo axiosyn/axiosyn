@@ -417,6 +417,7 @@
             const on = isToday && eaten.idx.includes(k);
             return `
             <article class="meal ${on ? 'eaten' : ''}">
+              ${m.id ? `<figure class="meal-photo"><img src="img/meals/${esc(m.id)}.jpg" alt="${esc(m.name)}" loading="lazy" width="960" height="720" onerror="this.parentNode.remove()"></figure>` : ''}
               <div><div class="lbl">${esc(m.label)}${m.min ? ` <span>· ${m.min} min</span>` : ''}</div><h4 style="margin:6px 0 6px">${esc(m.name)}</h4>
                 <div class="mm"><b>${m.kcal} kcal</b> · ${m.p} g protein · ${m.c} g carbs · ${m.f} g fat</div></div>
               <ul class="ing">
