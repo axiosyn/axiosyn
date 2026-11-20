@@ -391,8 +391,9 @@
     }[w.style];
     const b = blockNow(), vp = viewPhase();
     return `
-      ${P.isOutdated(w) ? `<div class="upgrade-note"><div><b>A better version of your program is ready.</b> Each goal now trains the muscles it is built around, with ab work every week and new variations every two weeks. Your logged workouts, weigh-ins and meals are kept.</div><button type="button" class="btn btn-primary btn-sm" data-action="upgrade-plan">Update my plan</button></div>` : ''}
+      ${P.isOutdated(w) ? `<div class="upgrade-note"><div><b>A better version of your program is ready.</b> More direct arm work and an overhead press for the goals that need them, smarter shoulder work, ab work every week and new variations every two weeks. Your logged workouts, weigh-ins and meals are kept.</div><button type="button" class="btn btn-primary btn-sm" data-action="upgrade-plan">Update my plan</button></div>` : ''}
       <div class="section-h" style="margin-top:0"><h3>${esc(w.splitName)}</h3><p>${styleCopy} Tap Motion to see the movement, Swap to change an exercise, and Log this workout to record your sets.</p></div>
+      ${(w.notes || []).map((t) => `<div class="note" style="margin-bottom:18px">${esc(t)}</div>`).join('')}
       <div class="blockbar">
         <div><b>Week ${b.week} of 4</b>${b.block > 1 ? ' · block ' + b.block : ''}<small>Weeks 1–2 and weeks 3–4 use different exercises for the same muscles. Each day’s main lift stays the same so you can watch it go up. After week 4 the block starts again.</small></div>
         <div class="seg" role="group" aria-label="Which weeks to show">${P.PHASE_WEEKS.map((label, ph) => `<button type="button" class="${vp === ph ? 'on' : ''}" data-action="phase" data-val="${ph}" aria-pressed="${vp === ph}">${label}${ph === b.phase ? ' · now' : ''}</button>`).join('')}</div>
@@ -677,9 +678,9 @@
         <div class="eyebrow">MuscleGain update</div>
         <h2 id="update-title">Your training plan just got better</h2>
         <ul>
-          <li><b>Built for your goal.</b> Each physique now gets more sets for the muscles it is about, so Muscular &amp; Shredded trains far more chest, shoulders and arms.</li>
-          <li><b>Abs every week.</b> Ab work in at least two or three sessions.</li>
-          <li><b>Fresh every two weeks.</b> Weeks 3–4 swap in new variations, then the block repeats.</li>
+          <li><b>Built for your goal.</b> The muscles your physique depends on get the most sets. Muscular &amp; Shredded now gets two biceps and two triceps exercises a week and an overhead press.</li>
+          <li><b>Smarter shoulder work.</b> One lateral raise per session instead of two in a row, and band versions if you train with bands.</li>
+          <li><b>Abs every week, fresh every two weeks.</b> Ab work in two or three sessions, and weeks 3–4 swap in new variations.</li>
         </ul>
         <p>Your logged workouts, weigh-ins and meals are kept, and your diet plan stays the same. Exercises you swapped by hand will be replaced.</p>
         <div class="modal-btns">
@@ -844,6 +845,8 @@
       }
       case 'upgrade-plan': {
         state.plan.workout = P.upgradeWorkout(state.plan.workout, answers());
+        // Refresh the advice notes too; calories and meals stay exactly as they are.
+        try { state.plan.nutrition.notes = P.nutrition(answers()).notes; } catch (e) { /* keep the old notes */ }
         state.logDay = null; state.viewPhase = null; state.updateDismissed = P.WORKOUT_VERSION;
         closeUpdatePrompt(); save(); render();
         toast('Your plan is updated.');

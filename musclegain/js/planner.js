@@ -59,8 +59,12 @@
       pace = 'leanbulk';
       notes.push('Your BMI is under 18.5, so the plan uses a small surplus instead of a deficit.');
     }
+    // BMI cannot tell fat from muscle, so the lean-look goals get a pointer to the faster route when Auto picks maintenance.
+    if (phys.shred && pace === 'recomp' && (!a.pace || a.pace === 'auto')) {
+      notes.push('For a lean, defined look, low body fat matters as much as muscle. If you cannot see the outline of your abs yet, choose Lose fat under Calorie strategy: you get there faster and the training keeps your muscle. Switch back once you are as lean as you want.');
+    }
     const cfg = P.PACES[pace];
-    const floor = a.sex === 'male' ? 1500 : 1200;
+    const floor =a.sex === 'male' ? 1500 : 1200;
     let kcal = Math.round((tdee * (1 + cfg.adj)) / 10) * 10;
     if (kcal < floor) {
       kcal = floor;
@@ -106,7 +110,10 @@
     glutes: { name: 'Glutes & Hamstrings', must: ['hinge', 'glute'], pool: ['glute', 'hinge', 'single_leg', 'ham_curl', 'squat', 'calves', 'core', 'quad_iso'] },
   };
   /* Slots that may appear twice in one session (different exercises). */
-  const REPEATABLE = { row: 2, biceps: 2, triceps: 2, lateral: 2, glute: 2, chest_fly: 1 };
+  const REPEATABLE = { row: 2, biceps: 2, triceps: 2, lateral: 1, glute: 2, chest_fly: 1 };
+  /* Goals that care about arms get at least two direct exercises a week for each; rows and presses alone are not enough. */
+  const DIRECT_ARMS = { bi: 'biceps', tri: 'triceps' };
+  const ARM_EMPH = 0.7;
   const UPPER_EXTRAS = ['lateral', 'rear_delt', 'biceps', 'triceps'];
   const LEG_DAYS = ['lowerA', 'lowerB', 'legs', 'glutes'];
 
@@ -211,6 +218,23 @@
     return kind === 'core' ? 3 : 0;
   }
 
+  /* Rough session length for a list of slots before exercises are chosen (same sums as dayMinutes, typical rests). */
+  function estMinutes(slots, style, lvl) {
+    let firstDone = false;
+    const sec = slots.reduce((t, slot) => {
+      const kind = MG.SLOTS[slot].kind;
+      if (kind === 'cardio') return t + (lvl === 0 ? 6 : 8) * 75 + 60;
+      const first = !firstDone && kind === 'compound';
+      if (first) firstDone = true;
+      const sets = estSets(slot, style, lvl, first);
+      const rest = kind === 'compound'
+        ? (first ? { mass: 180, hyp: 150, athletic: 120, lean: 120 }[style] : style === 'mass' ? 120 : 90)
+        : kind === 'iso' ? 60 : 45;
+      return t + sets * (40 + rest) + 60;
+    }, 0);
+    return Math.round((sec / 60 + 5) / 5) * 5;
+  }
+
   function makeItem(ex, slot, style, lvl, first) {
     const kind = MG.SLOTS[slot].kind;
     return Object.assign(
@@ -270,6 +294,46 @@
       must.forEach((s) => { const r = resolveSlot(s, eq, lvl); if (r && !slots.includes(r)) slots.push(r); });
       return { key, tpl, where, eq, eqList, slots, room: count - tail.length, tail };
     });
+    const compoundsIn = (d) => d.slots.filter((s) => MG.SLOTS[s].kind === 'compound').length;
+    const weekUses = (s) => plan.reduce((t, d) => t + d.slots.filter((x) => x === s).length, 0);
+    const extrasOn = (d) => d.slots.filter((x) => UPPER_EXTRAS.includes(x)).length;
+
+    // Open places are assumed to be half compound lifts, half isolation work, like a finished session.
+    const filler = (d, n) => Array.from({ length: n }, (_, k) => (LEG_DAYS.includes(d.key) ? ['single_leg', 'calves'] : ['row', 'lateral'])[k % 2]);
+    // Would the session still fit the user's time with this slot added? extraPlace: the slot gets a place of its own.
+    const fits = (d, extra, extraPlace) => {
+      const open = Math.max(0, d.room + (extraPlace ? 1 : 0) - d.slots.length - 1);
+      return estMinutes(d.slots.concat(extra, filler(d, open), d.tail), style, lvl) <= a.minutes;
+    };
+    const fullDayFits = (d, extra) => fits(d, extra, true);
+    // 1b. Shoulder-focused and strength goals get an overhead press when the session has time for it.
+    //     Upper / lower weeks have none built in.
+    if ((emph.side || 0) >= 1.2 || style === 'mass') {
+      const hasPress = plan.some((d) => d.slots.includes('shoulder_press'));
+      const day = !hasPress && ['upperB', 'upperA', 'fullB', 'fullA', 'fullC']
+        .map((k) => plan.find((d) => d.key === k && d.slots.length < d.room && compoundsIn(d) < 4 && resolveSlot('shoulder_press', d.eq, lvl) === 'shoulder_press' && fits(d, 'shoulder_press', false)))
+        .find(Boolean);
+      if (day) day.slots.push('shoulder_press');
+    }
+
+    // 1c. Goals built around arms get two direct exercises a week for biceps and two for triceps, on different days
+    //     (upper days first). Where a full session still fits the user's time, the arm exercise is an extra place,
+    //     so it does not push out chest, back or shoulder work. Otherwise only the first one takes a regular place, and
+    //     only for goals where arms are a headline muscle (not Big & Powerful, where back and legs come first).
+    for (const [m, slot] of Object.entries(DIRECT_ARMS)) {
+      if ((emph[m] || 0) < ARM_EMPH) continue;
+      const order = plan.filter((d) => !LEG_DAYS.includes(d.key)).concat(plan.filter((d) => LEG_DAYS.includes(d.key)));
+      for (const d of order) {
+        const placed = weekUses(slot);
+        if (placed >= 2) break;
+        if (d.slots.includes(slot) || !d.tpl.pool.includes(slot)) continue;
+        if (resolveSlot(slot, d.eq, lvl) !== slot) continue;
+        if (LEG_DAYS.includes(d.key) && extrasOn(d) >= 2) continue;
+        if (placed >= candidates(slot, d.eq, lvl).length * 2) continue;
+        if (fullDayFits(d, slot)) { d.slots.push(slot); d.room += 1; }
+        else if (placed === 0 && (emph[m] || 0) >= 1 && d.slots.length < d.room) d.slots.push(slot); // arms are a headline muscle
+      }
+    }
 
     // 2. Weekly targets per muscle, in proportion to the physique's emphasis.
     const capacity = plan.reduce((t, d) => t + d.room, 0) * estSets('row', style, lvl, false) * 1.35;
@@ -286,8 +350,6 @@
 
     // 3. Fill the free places one round at a time across all days, always with the slot that best closes the
     //    biggest gaps against the targets. Rounds keep the week balanced instead of front-loading Monday.
-    const compoundsIn = (d) => d.slots.filter((s) => MG.SLOTS[s].kind === 'compound').length;
-    const weekUses = (s) => plan.reduce((t, d) => t + d.slots.filter((x) => x === s).length, 0);
     const score = (slot) => P.MUSCLES.reduce((t, m) => {
       const f = (HITS[slot] || {})[m] || 0;
       if (!f || !target[m]) return t;
@@ -463,8 +525,9 @@
   }
 
   /* Bump this whenever the way programs are built changes, so saved plans can be offered an update.
-     1 = first release, 2 = 4-week blocks and guaranteed ab work, 3 = per-physique muscle emphasis. */
-  P.WORKOUT_VERSION = 3;
+     1 = first release, 2 = 4-week blocks and guaranteed ab work, 3 = per-physique muscle emphasis,
+     4 = direct arm work for arm goals, an overhead press for shoulder goals, one lateral raise per session, band options. */
+  P.WORKOUT_VERSION = 4;
   P.isOutdated = (workout) => !!workout && (workout.version || 1) < P.WORKOUT_VERSION;
   /* A fresh program from the same answers. The block keeps its start date so the week count carries on. */
   P.upgradeWorkout = function (old, a) {
@@ -482,8 +545,26 @@
     const daysB = buildPhaseB(a, daysA);
     const splitName = split.every((k) => k.startsWith('full')) ? 'Full Body ×' + days
       : phys.focus === 'glutes' ? 'Lower-body focus split' : SPLIT_NAMES[days];
-    return { splitName, style: phys.style, days: daysA, daysB, version: P.WORKOUT_VERSION };
+    return { splitName, style: phys.style, days: daysA, daysB, version: P.WORKOUT_VERSION, notes: equipmentNotes(a, phys, daysA) };
   };
+
+  /* Muscles the goal is built around that the chosen equipment cannot train, with what would fix it. */
+  const MUSCLE_NAMES = { chest: 'chest', back: 'back', front: 'front shoulders', side: 'side delts', rear: 'rear delts', bi: 'biceps', tri: 'triceps', quad: 'quads', ham: 'hamstrings', glute: 'glutes', calf: 'calves', abs: 'abs' };
+  function equipmentNotes(a, phys, days) {
+    const sets = P.weeklySets(days);
+    const emph = phys.emph || {};
+    const hasBands = a.location === 'gym' || (a.equipment || []).includes('bands');
+    const notes = [];
+    const missing = P.MUSCLES.filter((m) => (emph[m] || 0) >= 1 && sets[m] < 3);
+    if (missing.includes('side') && !hasBands) {
+      notes.push('Your equipment has nothing that trains the side delts, the part of the shoulder that makes them look wide. A light resistance band (about €10–15) adds lateral raises: tick Bands in your equipment and rebuild your plan.');
+    }
+    const rest = missing.filter((m) => !(m === 'side' && !hasBands));
+    if (rest.length) {
+      notes.push('Your equipment has little for your ' + rest.map((m) => MUSCLE_NAMES[m]).join(' and ') + ', which this goal is built around. A pair of dumbbells or a resistance band would cover it.');
+    }
+    return notes;
+  }
 
   /* Plans saved before blocks existed have one phase and may lack ab work: add both, keeping the user's swaps. */
   P.ensureBlock = function (workout, a) {

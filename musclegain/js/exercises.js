@@ -34,13 +34,13 @@
   MG.PHYSIQUES = {
     male: [
       { id: 'm_lean', name: 'Lean & Defined', img: 'img/physiques/m_lean.jpg', photo: 'photo-1541521493945-d00ed7dd0d8d',
-        blurb: 'Slim waist, visible abs, light athletic muscle.', style: 'lean', goal: 'lean', abs: 3,
+        blurb: 'Slim waist, visible abs, light athletic muscle.', style: 'lean', goal: 'lean', abs: 3, shred: true,
         emph: EMPH({ side: 1, rear: 0.6, quad: 0.8, glute: 0.6, abs: 0.9 }) },
       { id: 'm_athletic', name: 'Athletic', img: 'img/physiques/m_athletic.jpg', photo: 'photo-1562038969-e85c13ecb2ac',
         blurb: 'Balanced muscle everywhere. Strong, fit and mobile.', style: 'athletic', goal: 'athletic',
         emph: EMPH({ quad: 1.1, ham: 0.8, glute: 0.8, abs: 0.6 }) },
       { id: 'm_muscular', name: 'Muscular & Shredded', img: 'img/physiques/m_muscular.jpg', photo: 'photo-1610312856669-2cee66b2949c',
-        blurb: 'Wide shoulders, full chest and arms, low body fat.', style: 'hyp', goal: 'muscular', abs: 3,
+        blurb: 'Wide shoulders, full chest and arms, low body fat.', style: 'hyp', goal: 'muscular', abs: 3, shred: true,
         emph: EMPH({ chest: 1.5, back: 1.3, side: 1.4, rear: 0.8, bi: 1, tri: 1, quad: 0.8, ham: 0.6, glute: 0.5, abs: 0.7 }) },
       { id: 'm_mass', name: 'Big & Powerful', img: 'img/physiques/m_mass.jpg', photo: 'photo-1626724419913-ac60f768c20f',
         blurb: 'Maximum size and strength. Mass first, abs later.', style: 'mass', goal: 'mass',
@@ -48,10 +48,10 @@
     ],
     female: [
       { id: 'f_toned', name: 'Toned & Slim', img: 'img/physiques/f_toned.jpg', photo: 'photo-1708011108850-49646bd34503',
-        blurb: 'Lean all over with light muscle definition.', style: 'lean', goal: 'lean', abs: 3,
+        blurb: 'Lean all over with light muscle definition.', style: 'lean', goal: 'lean', abs: 3, shred: true,
         emph: EMPH({ chest: 0.6, back: 1, side: 0.7, bi: 0.4, tri: 0.5, quad: 1, ham: 0.8, glute: 1.1, abs: 0.8 }) },
       { id: 'f_defined', name: 'Lean & Defined', img: 'img/physiques/f_defined.jpg', photo: 'photo-1606902965551-dce093cda6e7',
-        blurb: 'Visible abs, shaped shoulders and legs.', style: 'hyp', goal: 'athletic', abs: 3,
+        blurb: 'Visible abs, shaped shoulders and legs.', style: 'hyp', goal: 'athletic', abs: 3, shred: true,
         emph: EMPH({ chest: 0.6, back: 1, side: 1.1, rear: 0.6, bi: 0.5, tri: 0.6, quad: 1, ham: 0.8, glute: 1, abs: 0.9 }) },
       { id: 'f_strong', name: 'Athletic & Strong', img: 'img/physiques/f_strong.jpg', photo: 'photo-1708011108776-45ad9e625269',
         blurb: 'Noticeable muscle and real strength on the big lifts.', style: 'athletic', goal: 'muscular',
@@ -123,11 +123,13 @@
       E('Arnold_Dumbbell_Press', 'Arnold Press', 'db', 'Start palms facing you, rotate out as you press.'),
       E('Two-Arm_Kettlebell_Military_Press', 'Kettlebell Overhead Press', 'kb', 'Kettlebell rests on the back of the forearm. Press without leaning back.'),
       E('Handstand_Push-Ups', 'Handstand Push-Up', 'bw', 'Against a wall. Lower your head to the floor under control.', { lvl: 2, bwLoad: true }),
+      E('Shoulder_Press_-_With_Bands', 'Band Shoulder Press', 'bands', 'Stand on the band, press straight up and lock out overhead. Shorten the band to make it harder.', { noMain: true }),
     ],
     lateral: [
       E('Side_Lateral_Raise', 'Dumbbell Lateral Raise', 'db', 'Lead with the elbows and raise to shoulder height. No swinging.'),
       E('Standing_Low-Pulley_Deltoid_Raise', 'Cable Lateral Raise', 'cable', 'Cable crosses in front of the body. Constant tension all the way.'),
       E('Seated_Side_Lateral_Raise', 'Seated Lateral Raise', 'db', 'Sitting removes momentum, so use lighter dumbbells.'),
+      E('Lateral_Raise_-_With_Bands', 'Band Lateral Raise', 'bands', 'Stand on the band, raise your arms out to shoulder height and lower slowly against the pull.'),
     ],
     rear_delt: [
       E('Face_Pull', 'Face Pull', 'cable', 'Rope to eye level, pull the ends apart and finish with thumbs pointing behind you.'),
